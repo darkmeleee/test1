@@ -85,6 +85,9 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -134,6 +137,11 @@ exports.Prisma.CartItemScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 
 exports.Prisma.NullsOrder = {
@@ -186,7 +194,7 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "sqlite",
+  "activeProvider": "postgresql",
   "inlineDatasources": {
     "db": {
       "url": {
@@ -195,8 +203,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String     @id @default(cuid())\n  telegramId String     @unique\n  username   String?\n  firstName  String\n  lastName   String?\n  photoUrl   String?\n  authDate   Int\n  hash       String\n  createdAt  DateTime   @default(now())\n  updatedAt  DateTime   @updatedAt\n  cartItems  CartItem[]\n\n  @@index([telegramId])\n}\n\nmodel Category {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  type      String // \"MAIN\" or \"ATTRIBUTE\"\n  flowers   Flower[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([type])\n}\n\nmodel Flower {\n  id              String     @id @default(cuid())\n  name            String\n  price           Float\n  image           String\n  categoryId      String\n  attributesJson  String     @default(\"[]\") // JSON string array of attribute IDs\n  inStock         Boolean    @default(true)\n  deliveryNextDay Boolean    @default(false)\n  category        Category   @relation(fields: [categoryId], references: [id])\n  cartItems       CartItem[]\n  createdAt       DateTime   @default(now())\n  updatedAt       DateTime   @updatedAt\n\n  @@index([categoryId])\n}\n\nmodel CartItem {\n  id        String   @id @default(cuid())\n  userId    String\n  flowerId  String\n  quantity  Int      @default(1)\n  user      User     @relation(fields: [userId], references: [id])\n  flower    Flower   @relation(fields: [flowerId], references: [id])\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([userId, flowerId])\n  @@index([userId])\n  @@index([flowerId])\n}\n",
-  "inlineSchemaHash": "126d6a6bf809504582d31bfa14bc5e4be71bad88e72aaa7c1da00f9d7359190e",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgres\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String     @id @default(cuid())\n  telegramId String     @unique\n  username   String?\n  firstName  String\n  lastName   String?\n  photoUrl   String?\n  authDate   Int\n  hash       String\n  createdAt  DateTime   @default(now())\n  updatedAt  DateTime   @updatedAt\n  cartItems  CartItem[]\n\n  @@index([telegramId])\n}\n\nmodel Category {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  type      String // \"MAIN\" or \"ATTRIBUTE\"\n  flowers   Flower[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([type])\n}\n\nmodel Flower {\n  id              String     @id @default(cuid())\n  name            String\n  price           Float\n  image           String\n  categoryId      String\n  attributesJson  String     @default(\"[]\") // JSON string array of attribute IDs\n  inStock         Boolean    @default(true)\n  deliveryNextDay Boolean    @default(false)\n  category        Category   @relation(fields: [categoryId], references: [id])\n  cartItems       CartItem[]\n  createdAt       DateTime   @default(now())\n  updatedAt       DateTime   @updatedAt\n\n  @@index([categoryId])\n}\n\nmodel CartItem {\n  id        String   @id @default(cuid())\n  userId    String\n  flowerId  String\n  quantity  Int      @default(1)\n  user      User     @relation(fields: [userId], references: [id])\n  flower    Flower   @relation(fields: [flowerId], references: [id])\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([userId, flowerId])\n  @@index([userId])\n  @@index([flowerId])\n}\n",
+  "inlineSchemaHash": "e9e939ef4f26dd686753043965066ceb3abb49652f8281e11ded0ff6d0b789ad",
   "copyEngine": true
 }
 
