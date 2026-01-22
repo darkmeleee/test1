@@ -17,14 +17,18 @@ export default function ProfilePage() {
     
     // Try to authenticate user
     const telegramData = window.Telegram?.WebApp?.initData;
+    console.log('Profile - Telegram data:', telegramData); // Debug log
+    
     if (telegramData) {
       // Parse Telegram WebApp initData to get user info
       const params = new URLSearchParams(telegramData);
       const userParam = params.get('user');
+      console.log('Profile - User param:', userParam); // Debug log
       
       if (userParam) {
         try {
           const user = JSON.parse(decodeURIComponent(userParam));
+          console.log('Profile - Parsed user:', user); // Debug log
           setUser({
             id: user.id.toString(),
             telegramId: user.id.toString(),
@@ -34,7 +38,7 @@ export default function ProfilePage() {
             photoUrl: user.photo_url,
           });
         } catch (error) {
-          console.error('Error parsing Telegram user data:', error);
+          console.error('Profile - Error parsing Telegram user data:', error);
           // Fallback to mock user if parsing fails
           setUser({
             id: "1",
@@ -46,6 +50,7 @@ export default function ProfilePage() {
           });
         }
       } else {
+        console.log('Profile - No user param in Telegram data'); // Debug log
         // No user data in Telegram, use mock user
         setUser({
           id: "1",
@@ -57,7 +62,8 @@ export default function ProfilePage() {
         });
       }
     } else {
-      // No Telegram data, use mock user
+      console.log('Profile - No Telegram data available'); // Debug log
+      // No Telegram data, use mock user (for development)
       setUser({
         id: "1",
         telegramId: "12345",

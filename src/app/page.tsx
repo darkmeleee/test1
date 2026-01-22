@@ -42,14 +42,18 @@ export default function HomePage() {
     
     // Try to authenticate user
     const telegramData = window.Telegram?.WebApp?.initData;
+    console.log('Telegram data:', telegramData); // Debug log
+    
     if (telegramData) {
       // Parse Telegram WebApp initData to get user info
       const params = new URLSearchParams(telegramData);
       const userParam = params.get('user');
+      console.log('User param:', userParam); // Debug log
       
       if (userParam) {
         try {
           const user = JSON.parse(decodeURIComponent(userParam));
+          console.log('Parsed user:', user); // Debug log
           setUser({
             id: user.id.toString(),
             telegramId: user.id.toString(),
@@ -71,6 +75,7 @@ export default function HomePage() {
           });
         }
       } else {
+        console.log('No user param in Telegram data'); // Debug log
         // No user data in Telegram, use mock user
         setUser({
           id: "1",
@@ -82,6 +87,7 @@ export default function HomePage() {
         });
       }
     } else {
+      console.log('No Telegram data available'); // Debug log
       // No Telegram data, use mock user (for development)
       setUser({
         id: "1",

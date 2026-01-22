@@ -68,6 +68,10 @@ export const telegram =
   typeof window !== "undefined" ? window.Telegram?.WebApp : null;
 
 export const initTelegram = () => {
+  console.log("Initializing Telegram..."); // Debug log
+  console.log("Telegram object:", telegram); // Debug log
+  console.log("initData:", telegram?.initData); // Debug log
+
   if (telegram) {
     telegram.ready();
     telegram.expand();
@@ -91,12 +95,19 @@ export const initTelegram = () => {
     if (theme.hint_color) {
       root.style.setProperty("--tg-hint-color", theme.hint_color);
     }
+    if (theme.link_color) {
+      root.style.setProperty("--tg-link-color", theme.link_color);
+    }
     if (theme.button_color) {
       root.style.setProperty("--tg-button-color", theme.button_color);
     }
     if (theme.button_text_color) {
       root.style.setProperty("--tg-button-text-color", theme.button_text_color);
     }
+
+    console.log("Telegram initialized successfully"); // Debug log
+  } else {
+    console.log("Telegram object not available"); // Debug log
   }
 };
 
