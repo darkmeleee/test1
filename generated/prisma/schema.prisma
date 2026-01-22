@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(cuid())
+  telegramId String     @unique
+  username   String?
+  firstName  String
+  lastName   String?
+  photoUrl   String?
+  authDate   Int
+  hash       String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  cartItems  CartItem[]
+
+  @@index([telegramId])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String // "MAIN" or "ATTRIBUTE"
+  flowers   Flower[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+}
+
+model Flower {
+  id              String     @id @default(cuid())
+  name            String
+  price           Float
+  image           String
+  categoryId      String
+  attributesJson  String     @default("[]") // JSON string array of attribute IDs
+  inStock         Boolean    @default(true)
+  deliveryNextDay Boolean    @default(false)
+  category        Category   @relation(fields: [categoryId], references: [id])
+  cartItems       CartItem[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([categoryId])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  flowerId  String
+  quantity  Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id])
+  flower    Flower   @relation(fields: [flowerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, flowerId])
+  @@index([userId])
+  @@index([flowerId])
+}
