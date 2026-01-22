@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 import { hapticImpact } from "~/utils/telegram";
-import type { CartItem, Flower } from "~/types";
+import { useCart } from "~/contexts/CartContext";
+import type { CartItem } from "~/types";
 
 import Header from "~/components/Header";
 import CartButton from "~/components/CartButton";
@@ -13,14 +13,12 @@ import BottomNav from "~/components/BottomNav";
 export default function CartPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { items, removeFromCart, updateQuantity, isLoading } = useCart();
 
   // Initialize user with Telegram WebApp data
   useEffect(() => {
-    // Try to authenticate user
     const telegramData = window.Telegram?.WebApp?.initData;
     if (telegramData) {
-      // Parse Telegram WebApp initData to get user info
       const params = new URLSearchParams(telegramData);
       const userParam = params.get('user');
       
@@ -37,7 +35,6 @@ export default function CartPage() {
           });
         } catch (error) {
           console.error('Error parsing Telegram user data:', error);
-          // Fallback to mock user if parsing fails
           setUser({
             id: "1",
             telegramId: "12345",
@@ -48,7 +45,6 @@ export default function CartPage() {
           });
         }
       } else {
-        // No user data in Telegram, use mock user
         setUser({
           id: "1",
           telegramId: "12345",
@@ -59,7 +55,6 @@ export default function CartPage() {
         });
       }
     } else {
-      // No Telegram data, use mock user (for development)
       setUser({
         id: "1",
         telegramId: "12345",
@@ -71,76 +66,26 @@ export default function CartPage() {
     }
   }, []);
 
-  // Get cart items and mutations
-  const { data: cartData, isLoading } = api.flowers.getCart.useQuery(
-    { userId: user?.id || "" },
-    { enabled: !!user }
-  );
-  
-  const updateCartItem = api.flowers.updateCartItem.useMutation();
-  const utils = api.useUtils();
-
-  // Update cart items when profile data changes
-  useEffect(() => {
-    if (cartData) {
-      // Transform API data to match CartItem interface
-      const transformedCartData = cartData.map(item => ({
-        ...item,
-        flower: item.flower ? {
-          ...item.flower,
-          attributes: JSON.parse(item.flower.attributesJson || "[]") as string[],
-        } : undefined,
-      }));
-      setCartItems(transformedCartData);
-    }
-  }, [cartData]);
-
   // Calculate totals
-  const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartTotal = items.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const updateQuantity = async (flowerId: string, quantity: number) => {
-    if (!user) return;
-    
-    hapticImpact('light');
-    
-    try {
-      await updateCartItem.mutateAsync({
-        userId: user.id,
-        flowerId,
-        quantity,
-      });
-      
-      // Refetch cart data
-      utils.flowers.getCart.invalidate({ userId: user.id });
-    } catch (error) {
-      console.error("Failed to update cart item:", error);
+  const handleUpdateQuantity = async (flowerId: string, quantity: number) => {
+    if (quantity === 0) {
+      await removeFromCart(flowerId);
+    } else {
+      await updateQuantity(flowerId, quantity);
     }
   };
 
-  const removeItem = async (flowerId: string) => {
-    if (!user) return;
-    
+  const handleRemoveItem = async (flowerId: string) => {
     hapticImpact('medium');
-    
-    try {
-      await updateCartItem.mutateAsync({
-        userId: user.id,
-        flowerId,
-        quantity: 0,
-      });
-      
-      // Refetch cart data
-      utils.flowers.getCart.invalidate({ userId: user.id });
-    } catch (error) {
-      console.error("Failed to remove cart item:", error);
-    }
+    await removeFromCart(flowerId);
   };
 
   const handleCheckout = () => {
     hapticImpact('heavy');
-    // TODO: Implement checkout logic
-    alert("Переход к оформлению заказа...");
+    router.push("/checkout");
   };
 
   if (!user) {
@@ -182,7 +127,7 @@ export default function CartPage() {
           Корзина
         </h1>
 
-        {cartItems.length === 0 ? (
+        {items.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               Ваша корзина пуста
@@ -196,7 +141,7 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {cartItems.map((item) => (
+            {items.map((item) => (
               <div
                 key={item.id}
                 className="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800"
@@ -224,7 +169,7 @@ export default function CartPage() {
                   {/* Quantity Controls */}
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => updateQuantity(item.flowerId, item.quantity - 1)}
+                      onClick={() => handleUpdateQuantity(item.flowerId, item.quantity - 1)}
                       className="rounded bg-gray-200 p-1 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,7 +182,7 @@ export default function CartPage() {
                     </span>
                     
                     <button
-                      onClick={() => updateQuantity(item.flowerId, item.quantity + 1)}
+                      onClick={() => handleUpdateQuantity(item.flowerId, item.quantity + 1)}
                       className="rounded bg-gray-200 p-1 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +191,7 @@ export default function CartPage() {
                     </button>
                     
                     <button
-                      onClick={() => removeItem(item.flowerId)}
+                      onClick={() => handleRemoveItem(item.flowerId)}
                       className="ml-2 rounded bg-red-100 p-1 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800"
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

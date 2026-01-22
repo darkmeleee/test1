@@ -13,7 +13,7 @@ export default function Header({ user }: HeaderProps) {
           {/* Logo and Location */}
           <div className="flex items-center space-x-4">
             <div className="text-xl font-bold text-green-600 dark:text-green-400">
-              🌸 BUNCH
+              🌸 BUNCsdadsH
             </div>
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
               <MapPin className="mr-1 h-4 w-4" />

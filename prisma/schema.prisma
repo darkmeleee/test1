@@ -23,6 +23,7 @@ model User {
     createdAt  DateTime   @default(now())
     updatedAt  DateTime   @updatedAt
     cartItems  CartItem[]
+    orders     Order[]
 
     @@index([telegramId])
 }
@@ -39,18 +40,20 @@ model Category {
 }
 
 model Flower {
-    id              String     @id @default(cuid())
+    id              String      @id @default(cuid())
     name            String
     price           Float
     image           String
     categoryId      String
-    attributesJson  String     @default("[]") // JSON string array of attribute IDs
-    inStock         Boolean    @default(true)
-    deliveryNextDay Boolean    @default(false)
-    category        Category   @relation(fields: [categoryId], references: [id])
+    attributesJson  String      @default("[]") // JSON string array of attribute IDs
+    inStock         Boolean     @default(true)
+    deliveryNextDay Boolean     @default(false)
+    category        Category    @relation(fields: [categoryId], references: [id])
     cartItems       CartItem[]
-    createdAt       DateTime   @default(now())
-    updatedAt       DateTime   @updatedAt
+    orderItems      OrderItem[]
+    orders          Order[]
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     @@index([categoryId])
 }
@@ -67,5 +70,38 @@ model CartItem {
 
     @@unique([userId, flowerId])
     @@index([userId])
+    @@index([flowerId])
+}
+
+model Order {
+    id              String      @id @default(cuid())
+    userId          String
+    totalAmount     Float
+    status          String      @default("PENDING") // PENDING, CONFIRMED, DELIVERED, CANCELLED
+    deliveryAddress String?
+    phoneNumber     String?
+    notes           String?
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+    user            User        @relation(fields: [userId], references: [id])
+    items           OrderItem[]
+    flower          Flower?     @relation(fields: [flowerId], references: [id])
+    flowerId        String?
+
+    @@index([userId])
+    @@index([status])
+}
+
+model OrderItem {
+    id        String   @id @default(cuid())
+    orderId   String
+    flowerId  String
+    quantity  Int
+    price     Float // Price at time of order
+    order     Order    @relation(fields: [orderId], references: [id])
+    flower    Flower   @relation(fields: [flowerId], references: [id])
+    createdAt DateTime @default(now())
+
+    @@index([orderId])
     @@index([flowerId])
 }

@@ -69,46 +69,67 @@ export const telegram =
 
 export const initTelegram = () => {
   console.log("Initializing Telegram..."); // Debug log
-  console.log("Telegram object:", telegram); // Debug log
-  console.log("initData:", telegram?.initData); // Debug log
 
-  if (telegram) {
-    telegram.ready();
-    telegram.expand();
+  // Wait a bit for Telegram WebApp to be available
+  setTimeout(() => {
+    console.log("Window object:", typeof window); // Debug log
 
-    // Set theme colors
-    const root = document.documentElement;
-    if (telegram.colorScheme === "dark") {
-      root.classList.add("dark");
+    // Store debug info in window for display
+    if (typeof window !== "undefined") {
+      (window as any).telegramDebug = {
+        windowExists: true,
+        telegramExists: !!window.Telegram,
+        webappExists: !!window.Telegram?.WebApp,
+        initData: window.Telegram?.WebApp?.initData || "EMPTY",
+        initDataUnsafe: window.Telegram?.WebApp?.initDataUnsafe || "EMPTY",
+      };
+      console.log("Debug info stored:", (window as any).telegramDebug);
+    }
+
+    if (telegram) {
+      initTelegramWebApp();
     } else {
-      root.classList.remove("dark");
+      console.log("Telegram object not available - running in browser mode"); // Debug log
     }
+  }, 1000); // Wait 1 second for script to load
+};
 
-    // Apply theme params
-    const theme = telegram.themeParams;
-    if (theme.bg_color) {
-      root.style.setProperty("--tg-bg-color", theme.bg_color);
-    }
-    if (theme.text_color) {
-      root.style.setProperty("--tg-text-color", theme.text_color);
-    }
-    if (theme.hint_color) {
-      root.style.setProperty("--tg-hint-color", theme.hint_color);
-    }
-    if (theme.link_color) {
-      root.style.setProperty("--tg-link-color", theme.link_color);
-    }
-    if (theme.button_color) {
-      root.style.setProperty("--tg-button-color", theme.button_color);
-    }
-    if (theme.button_text_color) {
-      root.style.setProperty("--tg-button-text-color", theme.button_text_color);
-    }
+const initTelegramWebApp = () => {
+  if (!telegram) return;
 
-    console.log("Telegram initialized successfully"); // Debug log
+  telegram.ready();
+  telegram.expand();
+
+  // Set theme colors
+  const root = document.documentElement;
+  if (telegram.colorScheme === "dark") {
+    root.classList.add("dark");
   } else {
-    console.log("Telegram object not available"); // Debug log
+    root.classList.remove("dark");
   }
+
+  // Apply theme params
+  const theme = telegram.themeParams;
+  if (theme.bg_color) {
+    root.style.setProperty("--tg-bg-color", theme.bg_color);
+  }
+  if (theme.text_color) {
+    root.style.setProperty("--tg-text-color", theme.text_color);
+  }
+  if (theme.hint_color) {
+    root.style.setProperty("--tg-hint-color", theme.hint_color);
+  }
+  if (theme.link_color) {
+    root.style.setProperty("--tg-link-color", theme.link_color);
+  }
+  if (theme.button_color) {
+    root.style.setProperty("--tg-button-color", theme.button_color);
+  }
+  if (theme.button_text_color) {
+    root.style.setProperty("--tg-button-text-color", theme.button_text_color);
+  }
+
+  console.log("Telegram initialized successfully"); // Debug log
 };
 
 export const hapticImpact = (style: "light" | "medium" | "heavy" = "light") => {

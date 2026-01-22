@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { CartProvider } from "~/contexts/CartContext";
+import TelegramLoader from "~/components/TelegramLoader";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -22,7 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <CartProvider>
+            <TelegramLoader />
+            {children}
+          </CartProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

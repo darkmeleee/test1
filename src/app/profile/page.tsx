@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { initTelegram } from "~/utils/telegram";
+import { authenticateWithTelegram } from "~/utils/auth";
 import type { User, CartItem } from "~/types";
 import Header from "~/components/Header";
 import BottomNav from "~/components/BottomNav";
@@ -12,73 +13,165 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  useEffect(() => {
-    initTelegram();
-    
-    // Try to authenticate user
-    const telegramData = window.Telegram?.WebApp?.initData;
-    console.log('Profile - Telegram data:', telegramData); // Debug log
-    
-    if (telegramData) {
-      // Parse Telegram WebApp initData to get user info
-      const params = new URLSearchParams(telegramData);
-      const userParam = params.get('user');
-      console.log('Profile - User param:', userParam); // Debug log
+  // Function to get user data directly from Telegram WebApp
+  const getUserFromWebApp = () => {
+    try {
+      console.log('getUserFromWebApp called');
       
-      if (userParam) {
+      if (typeof window === 'undefined') {
+        console.log('Window is not available (server-side rendering)');
+        return null;
+      }
+      
+      // Log all available Telegram WebApp data for debugging
+      console.log('Telegram object exists:', !!window.Telegram);
+      console.log('WebApp object exists:', !!window.Telegram?.WebApp);
+      console.log('initData exists:', !!window.Telegram?.WebApp?.initData);
+      console.log('initDataUnsafe exists:', !!window.Telegram?.WebApp?.initDataUnsafe);
+      
+      if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+        console.log('Found user in initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe.user);
+        const user = window.Telegram.WebApp.initDataUnsafe.user;
+        return {
+          id: user.id?.toString() || 'no-id',
+          telegramId: user.id?.toString() || 'no-telegram-id',
+          firstName: user.first_name || 'No',
+          username: user.username || 'nousername',
+          photoUrl: user.photo_url || ''
+        };
+      } else {
+        console.log('No user in initDataUnsafe');
+      }
+      
+      // Fallback to parsing initData directly
+      if (window.Telegram?.WebApp?.initData) {
+        console.log('initData exists, trying to parse it');
         try {
-          const user = JSON.parse(decodeURIComponent(userParam));
-          console.log('Profile - Parsed user:', user); // Debug log
-          setUser({
-            id: user.id.toString(),
-            telegramId: user.id.toString(),
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            photoUrl: user.photo_url,
-          });
-        } catch (error) {
-          console.error('Profile - Error parsing Telegram user data:', error);
-          // Fallback to mock user if parsing fails
-          setUser({
-            id: "1",
-            telegramId: "12345",
-            firstName: "Test",
-            lastName: "User",
-            username: "testuser",
-            photoUrl: "https://via.placeholder.com/100",
-          });
+          const params = new URLSearchParams(window.Telegram.WebApp.initData);
+          const userParam = params.get('user');
+          console.log('User param from initData:', userParam);
+          
+          if (userParam) {
+            const user = JSON.parse(decodeURIComponent(userParam));
+            console.log('Parsed user from initData:', user);
+            return {
+              id: user.id?.toString() || 'no-id',
+              telegramId: user.id?.toString() || 'no-telegram-id',
+              firstName: user.first_name || 'No',
+              username: user.username || 'nousername',
+              photoUrl: user.photo_url || ''
+            };
+          }
+        } catch (e) {
+          console.error('Error parsing initData:', e);
         }
       } else {
-        console.log('Profile - No user param in Telegram data'); // Debug log
-        // No user data in Telegram, use mock user
-        setUser({
-          id: "1",
-          telegramId: "12345",
-          firstName: "Test",
-          lastName: "User",
-          username: "testuser",
-          photoUrl: "https://via.placeholder.com/100",
-        });
+        console.log('initData is not available');
       }
-    } else {
-      console.log('Profile - No Telegram data available'); // Debug log
-      // No Telegram data, use mock user (for development)
-      setUser({
-        id: "1",
-        telegramId: "12345",
-        firstName: "Test",
-        lastName: "User",
-        username: "testuser",
-        photoUrl: "https://via.placeholder.com/100",
-      });
+      
+      console.log('No user data found in WebApp');
+      return null;
+    } catch (error) {
+      console.error('Error in getUserFromWebApp:', error);
+      return null;
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    console.log('Profile: Starting initialization...');
+    
+    const initProfile = () => {
+      try {
+        console.log('Initializing Telegram WebApp...');
+        initTelegram();
+        
+        // Debug: Log all available window properties
+        console.log('Window properties:', Object.keys(window).filter(k => k.toLowerCase().includes('telegram')));
+        
+        // Try to get user directly from WebApp first
+        console.log('Trying to get user from WebApp...');
+        const webAppUser = getUserFromWebApp();
+        
+        if (webAppUser) {
+          console.log('✅ Successfully got user from WebApp:', webAppUser);
+          setUser(webAppUser);
+          return;
+        }
+        
+        console.log('❌ Could not get user from WebApp, trying API authentication...');
+        
+        // Fallback to API authentication if WebApp data is not available
+        authenticateWithTelegram()
+          .then((userData) => {
+            console.log('API authentication response:', userData);
+            if (userData?.success && userData?.user) {
+              console.log('✅ Using user from API:', userData.user);
+              setUser(userData.user);
+            } else {
+              console.error('❌ Authentication failed: No user data received from API');
+              // Show debug info in the UI
+              setUser({
+                id: 'debug-mode',
+                telegramId: 'debug-telegram-id',
+                firstName: 'Debug',
+                lastName: 'Mode',
+                username: 'debug_user',
+                photoUrl: ''
+              });
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Authentication error:', error);
+          });
+          
+      } catch (error) {
+        console.error('❌ Initialization error:', error);
+      } finally {
+        console.log('Initialization process completed');
+      }
+    };
+    
+    // Try to initialize immediately
+    console.log('Starting initialization...');
+    initProfile();
+    
+    // Also set up a retry mechanism in case Telegram WebApp loads after our initial attempt
+    const maxRetries = 5;
+    let retryCount = 0;
+    
+    const retryInterval = setInterval(() => {
+      if (user) {
+        console.log('User data loaded, clearing retry interval');
+        clearInterval(retryInterval);
+        return;
+      }
+      
+      if (retryCount >= maxRetries) {
+        console.log('Max retries reached, giving up');
+        clearInterval(retryInterval);
+        return;
+      }
+      
+      console.log(`Retry ${retryCount + 1}/${maxRetries} to get Telegram data...`);
+      initProfile();
+      retryCount++;
+    }, 1000);
+    
+    return () => {
+      clearInterval(retryInterval);
+    };
+  }, [user]); // Add user to dependencies to clear interval when user is loaded
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Загрузка...</div>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+          <div className="mb-6">
+            <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          </div>
+          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Загрузка профиля</h2>
+          <p className="text-gray-600 dark:text-gray-400">Пожалуйста, подождите...</p>
+        </div>
       </div>
     );
   }
@@ -97,13 +190,13 @@ export default function ProfilePage() {
             {user.photoUrl && (
               <img
                 src={user.photoUrl}
-                alt={`${user.firstName} ${user.lastName || ""}`}
+                alt={`${user.firstName}`}
                 className="h-20 w-20 rounded-full object-cover"
               />
             )}
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {user.firstName} {user.lastName || ""}
+                {user.firstName}
               </h1>
               {user.username && (
                 <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>

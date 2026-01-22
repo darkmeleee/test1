@@ -12,6 +12,27 @@ import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 
+// Basic User type that matches our Prisma schema
+type User = {
+  id: string;
+  telegramId: string;
+  username?: string | null;
+  firstName: string;
+  lastName?: string | null;
+  photoUrl?: string | null;
+};
+
+type AuthUser = User | null;
+
+// Extend the TRPC context type to include our custom context
+declare module "@trpc/server" {
+  interface CreateTRPCContextOptions {
+    user: AuthUser;
+    headers: Headers;
+    db: typeof db;
+  }
+}
+
 /**
  * 1. CONTEXT
  *
@@ -25,8 +46,18 @@ import { db } from "~/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  // In a production app, you would typically:
+  // 1. Get the auth token from the request headers
+  // 2. Verify the token
+  // 3. Fetch the user from the database
+  // 4. Return the user in the context
+
+  // For now, we'll set it to null and handle authentication in the middleware
+  const user = null;
+
   return {
     db,
+    user,
     ...opts,
   };
 };
@@ -104,3 +135,24 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+
+/**
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ */
+export const protectedProcedure = t.procedure.use(timingMiddleware).use(
+  t.middleware(async ({ ctx, next }) => {
+    if (!ctx.user) {
+      throw new Error("Not authenticated");
+    }
+
+    return next({
+      ctx: {
+        // This ensures the user is non-null in the next middleware
+        user: ctx.user,
+      },
+    });
+  }),
+);

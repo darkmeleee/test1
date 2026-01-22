@@ -3,14 +3,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { initTelegram, hapticImpact } from "~/utils/telegram";
-import type { Flower, Category, CartItem, FilterState } from "~/types";
+import { initTelegram } from "~/utils/telegram";
+import { authenticateWithTelegram } from "~/utils/auth";
+import Header from "~/components/Header";
+import CategoryFilter from "~/components/CategoryFilter";
+import FlowerGrid from "~/components/FlowerGrid";
+import CartButton from "~/components/CartButton";
+import TelegramDebug from "~/components/TelegramDebug";
+import { hapticImpact } from "~/utils/telegram";
+import type { Flower, Category, CartItem, User, FilterState } from "~/types";
 
 // Components will be created separately
-import Header from "~/components/Header";
-import CategoryFilter from "~/components/CategoryFilter.tsx";
-import FlowerGrid from "~/components/FlowerGrid.tsx";
-import CartButton from "~/components/CartButton.tsx";
 import BottomNav from "~/components/BottomNav.tsx";
 
 export default function HomePage() {
@@ -22,49 +25,17 @@ export default function HomePage() {
     selectedAttributes: [],
   });
 
-  // API calls
-  const { data: categories, isLoading: categoriesLoading } = api.flowers.getCategories.useQuery();
-  const { data: allFlowers, isLoading: flowersLoading } = api.flowers.getFlowers.useQuery();
-
-  // Update filter to use actual "Все" category ID when categories load
-  useEffect(() => {
-    if (categories && filter.selectedCategory === "all") {
-      const allCategory = categories.find(cat => cat.name === "Все");
-      if (allCategory) {
-        setFilter(prev => ({ ...prev, selectedCategory: allCategory.id }));
-      }
-    }
-  }, [categories, filter.selectedCategory]);
-
-  // Initialize Telegram WebApp
+  // Initialize Telegram and authenticate
   useEffect(() => {
     initTelegram();
     
-    // Try to authenticate user
-    const telegramData = window.Telegram?.WebApp?.initData;
-    console.log('Telegram data:', telegramData); // Debug log
-    
-    if (telegramData) {
-      // Parse Telegram WebApp initData to get user info
-      const params = new URLSearchParams(telegramData);
-      const userParam = params.get('user');
-      console.log('User param:', userParam); // Debug log
-      
-      if (userParam) {
-        try {
-          const user = JSON.parse(decodeURIComponent(userParam));
-          console.log('Parsed user:', user); // Debug log
-          setUser({
-            id: user.id.toString(),
-            telegramId: user.id.toString(),
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            photoUrl: user.photo_url,
-          });
-        } catch (error) {
-          console.error('Error parsing Telegram user data:', error);
-          // Fallback to mock user if parsing fails
+    // Use separate authentication function
+    authenticateWithTelegram()
+      .then((userData) => {
+        if (userData?.success && userData?.user) {
+          setUser(userData.user);
+        } else {
+          console.log('Authentication failed, using mock user'); // Debug log
           setUser({
             id: "1",
             telegramId: "12345",
@@ -74,9 +45,9 @@ export default function HomePage() {
             photoUrl: "https://via.placeholder.com/100",
           });
         }
-      } else {
-        console.log('No user param in Telegram data'); // Debug log
-        // No user data in Telegram, use mock user
+      })
+      .catch((error) => {
+        console.error('Authentication error:', error); // Debug log
         setUser({
           id: "1",
           telegramId: "12345",
@@ -85,20 +56,15 @@ export default function HomePage() {
           username: "testuser",
           photoUrl: "https://via.placeholder.com/100",
         });
-      }
-    } else {
-      console.log('No Telegram data available'); // Debug log
-      // No Telegram data, use mock user (for development)
-      setUser({
-        id: "1",
-        telegramId: "12345",
-        firstName: "Test",
-        lastName: "User",
-        username: "testuser",
-        photoUrl: "https://via.placeholder.com/100",
       });
-    }
   }, []);
+
+  // Get categories and flowers data
+  const { data: categories, isLoading: categoriesLoading } = api.flowers.getCategories.useQuery();
+  const { data: allFlowers, isLoading: flowersLoading } = api.flowers.getFlowers.useQuery({
+    categoryId: undefined, // Get all flowers
+    attributes: [],
+  });
 
   // Filter flowers based on selection
   const filteredFlowers = useMemo(() => {
@@ -176,6 +142,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header user={user} />
+      <TelegramDebug />
       
       <main className="container mx-auto px-4 py-6 pb-20">
         <CategoryFilter
@@ -197,10 +164,7 @@ export default function HomePage() {
         <CartButton
           count={cartCount}
           total={cartTotal}
-          onClick={() => {
-            router.push("/cart");
-            hapticImpact('medium');
-          }}
+          onClick={() => router.push("/cart")}
         />
       )}
 
