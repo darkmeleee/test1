@@ -46,6 +46,15 @@ export function useTelegramAuth() {
             return null;
           }
 
+          if (
+            parsed?.id &&
+            parsed?.telegramId &&
+            parsed.id === parsed.telegramId
+          ) {
+            clearUserFromStorage();
+            return null;
+          }
+
           return parsed;
         }
       }
@@ -72,7 +81,6 @@ export function useTelegramAuth() {
           username: user.username || "nousername",
           photoUrl: user.photo_url || "",
         };
-        saveUserToStorage(userData);
         return userData;
       }
 
@@ -92,7 +100,6 @@ export function useTelegramAuth() {
               username: user.username || "nousername",
               photoUrl: user.photo_url || "",
             };
-            saveUserToStorage(userData);
             return userData;
           }
         } catch (e) {

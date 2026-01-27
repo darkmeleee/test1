@@ -13,9 +13,11 @@ export default function ProfilePage() {
   const { user } = useTelegramAuth();
   const { orders, isLoading } = useOrder();
 
+  const hasDbUser = !!user?.id && user.id !== user.telegramId;
+
   const profileQuery = api.auth.getProfile.useQuery(
     { userId: user?.id ?? "" },
-    { enabled: !!user?.id },
+    { enabled: hasDbUser },
   );
 
   const profileUser = profileQuery.data
@@ -29,7 +31,7 @@ export default function ProfilePage() {
       }
     : null;
 
-  if (!user || profileQuery.isLoading || !profileUser) {
+  if (!user) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
@@ -38,6 +40,47 @@ export default function ProfilePage() {
           </div>
           <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Загрузка профиля</h2>
           <p className="text-gray-600 dark:text-gray-400">Пожалуйста, подождите...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasDbUser) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+          <div className="mb-6">
+            <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          </div>
+          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Авторизация</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Пожалуйста, подождите...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (profileQuery.isLoading || !profileUser) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+          <div className="mb-6">
+            <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          </div>
+          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Загрузка профиля</h2>
+          <p className="text-gray-600 dark:text-gray-400">Пожалуйста, подождите...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (profileQuery.isError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Ошибка загрузки профиля</h2>
+          <p className="text-gray-600 dark:text-gray-400">Попробуйте перезапустить приложение.</p>
         </div>
       </div>
     );
