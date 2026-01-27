@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { initTelegram } from "~/utils/telegram";
-import { authenticateWithTelegram } from "~/utils/auth";
 import type { User } from "~/types";
+import { api } from "~/trpc/react";
 
 const USER_STORAGE_KEY = "seva-flowers-user";
 
 export function useTelegramAuth() {
   const [user, setUser] = useState<User | null>(null);
   const isInitialized = useRef(false);
+  const authenticateMutation = api.auth.authenticate.useMutation();
 
   // Function to save user to localStorage
   const saveUserToStorage = (userData: User) => {
@@ -127,22 +128,46 @@ export function useTelegramAuth() {
 
         if (webAppUser) {
           setUser(webAppUser);
-          // Removed the API authentication call
+
+          const telegramData = window.Telegram?.WebApp?.initData;
+          if (!telegramData) {
+            return;
+          }
+
+          authenticateMutation
+            .mutateAsync({ initData: telegramData })
+            .then((result) => {
+              if (result?.success && result.user) {
+                setUser(result.user);
+                saveUserToStorage(result.user);
+              }
+            })
+            .catch(() => {
+              // Keep WebApp user as a fallback
+            });
+
           return;
         }
 
-        // Fallback to API authentication if WebApp data is not available
-        authenticateWithTelegram()
-          .then((userData) => {
-            if (userData?.success && userData?.user) {
-              setUser(userData.user);
-              saveUserToStorage(userData.user);
+        const telegramData = window.Telegram?.WebApp?.initData;
+        if (!telegramData) {
+          clearUserFromStorage();
+          setUser(null);
+          return;
+        }
+
+        authenticateMutation
+          .mutateAsync({ initData: telegramData })
+          .then((result) => {
+            if (result?.success && result.user) {
+              setUser(result.user);
+              saveUserToStorage(result.user);
             } else {
               clearUserFromStorage();
               setUser(null);
             }
           })
-          .catch((error) => {
+          .catch(() => {
             clearUserFromStorage();
             setUser(null);
           });

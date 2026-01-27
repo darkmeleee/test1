@@ -50,10 +50,10 @@ export interface OrderItem {
 export interface User {
   id: string;
   telegramId: string;
-  username?: string;
+  username?: string | null;
   firstName: string;
-  lastName?: string;
-  photoUrl?: string;
+  lastName?: string | null;
+  photoUrl?: string | null;
 }
 
 export interface FilterState {

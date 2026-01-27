@@ -6,13 +6,30 @@ import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import type { Order } from "~/types";
 import Header from "~/components/Header";
 import BottomNav from "~/components/BottomNav";
+import { api } from "~/trpc/react";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user } = useTelegramAuth();
   const { orders, isLoading } = useOrder();
 
-  if (!user) {
+  const profileQuery = api.auth.getProfile.useQuery(
+    { userId: user?.id ?? "" },
+    { enabled: !!user?.id },
+  );
+
+  const profileUser = profileQuery.data
+    ? {
+        id: profileQuery.data.id,
+        telegramId: profileQuery.data.telegramId,
+        username: profileQuery.data.username,
+        firstName: profileQuery.data.firstName,
+        lastName: profileQuery.data.lastName,
+        photoUrl: profileQuery.data.photoUrl,
+      }
+    : null;
+
+  if (!user || profileQuery.isLoading || !profileUser) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
@@ -32,29 +49,29 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
-      <Header user={user} />
+      <Header user={profileUser} />
       
       <main className="container mx-auto px-4 py-6">
         {/* Profile Header */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center space-x-4">
-            {user.photoUrl && (
+            {profileUser.photoUrl && (
               <img
-                src={user.photoUrl}
-                alt={`${user.firstName}`}
+                src={profileUser.photoUrl}
+                alt={`${profileUser.firstName}`}
                 className="h-20 w-20 rounded-full object-cover"
               />
             )}
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {user.firstName}
+                {profileUser.firstName}
               </h1>
-              {user.username && (
-                <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>
+              {profileUser.username && (
+                <p className="text-gray-600 dark:text-gray-400">@{profileUser.username}</p>
               )}
               <div className="flex items-center space-x-2 mt-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                  Telegram ID: {user.telegramId}
+                  Telegram ID: {profileUser.telegramId}
                 </span>
               </div>
             </div>
