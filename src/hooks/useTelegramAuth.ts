@@ -22,13 +22,30 @@ export function useTelegramAuth() {
     }
   };
 
+  const clearUserFromStorage = () => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(USER_STORAGE_KEY);
+      }
+    } catch (error) {
+      // Silent error
+    }
+  };
+
   // Function to load user from localStorage
   const loadUserFromStorage = (): User | null => {
     try {
       if (typeof window !== "undefined") {
         const storedUser = localStorage.getItem(USER_STORAGE_KEY);
         if (storedUser) {
-          return JSON.parse(storedUser);
+          const parsed = JSON.parse(storedUser) as User;
+
+          if (parsed?.id === "debug-mode") {
+            clearUserFromStorage();
+            return null;
+          }
+
+          return parsed;
         }
       }
     } catch (error) {
@@ -114,23 +131,6 @@ export function useTelegramAuth() {
           return;
         }
 
-        // Debug: Check what's available
-        alert(
-          `Debug - Telegram WebApp available: ${!!window.Telegram?.WebApp}`,
-        );
-        alert(
-          `Debug - initData available: ${!!window.Telegram?.WebApp?.initData}`,
-        );
-        alert(
-          `Debug - initDataUnsafe available: ${!!window.Telegram?.WebApp?.initDataUnsafe}`,
-        );
-
-        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-          alert(
-            `Debug - User found in initDataUnsafe: ${JSON.stringify(window.Telegram.WebApp.initDataUnsafe.user)}`,
-          );
-        }
-
         // Fallback to API authentication if WebApp data is not available
         authenticateWithTelegram()
           .then((userData) => {
@@ -138,31 +138,13 @@ export function useTelegramAuth() {
               setUser(userData.user);
               saveUserToStorage(userData.user);
             } else {
-              // Show debug info in the UI
-              const debugUser = {
-                id: "debug-mode",
-                telegramId: "debug-telegram-id",
-                firstName: "Debug",
-                lastName: "Mode",
-                username: "debug_user",
-                photoUrl: "",
-              };
-              setUser(debugUser);
-              saveUserToStorage(debugUser);
+              clearUserFromStorage();
+              setUser(null);
             }
           })
           .catch((error) => {
-            // Show debug info in the UI
-            const debugUser = {
-              id: "debug-mode",
-              telegramId: "debug-telegram-id",
-              firstName: "Debug",
-              lastName: "Mode",
-              username: "debug_user",
-              photoUrl: "",
-            };
-            setUser(debugUser);
-            saveUserToStorage(debugUser);
+            clearUserFromStorage();
+            setUser(null);
           });
       } catch (error) {
         // Silent error
