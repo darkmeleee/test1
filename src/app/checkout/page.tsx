@@ -45,13 +45,11 @@ export default function CheckoutPage() {
       if (order) {
         hapticImpact('heavy');
         router.push(`/order-confirmation/${order.id}`);
-      } else {
-        throw new Error("Failed to create order");
       }
+      // If order is null, the toast notification is already shown by the OrderContext
     } catch (error: any) {
-      console.error("Order submission error:", error);
       hapticImpact('medium');
-      alert("Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.");
+      // Additional error handling if needed
     } finally {
       setIsSubmitting(false);
     }

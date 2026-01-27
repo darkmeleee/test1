@@ -35,7 +35,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (error) {
-        console.error("Error loading cart from localStorage:", error);
+        // Silent error
       } finally {
         setIsLoading(false);
       }
@@ -52,7 +52,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
         }
       } catch (error) {
-        console.error("Error saving cart to localStorage:", error);
+        // Silent error
       }
     }
   }, [items, isLoading]);

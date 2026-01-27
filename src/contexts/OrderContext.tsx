@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { Order, OrderItem } from "~/types";
 import { useCart } from "./CartContext";
+import { useTelegramAuth } from "~/hooks/useTelegramAuth";
+import { useToast } from "~/hooks/useToast";
 
 interface OrderContextType {
   orders: Order[];
@@ -24,6 +26,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { items: cartItems, clearCart } = useCart();
+  const { user } = useTelegramAuth();
+  const { showToast } = useToast();
 
   // Load orders from localStorage
   useEffect(() => {
@@ -37,7 +41,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (error) {
-        console.error("Error loading orders from localStorage:", error);
+        // Silent error
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +58,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
           localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
         }
       } catch (error) {
-        console.error("Error saving orders to localStorage:", error);
+        // Silent error
       }
     }
   }, [orders, isLoading]);
@@ -65,12 +69,15 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     phoneNumber?: string;
     notes?: string;
   }): Promise<Order | null> => {
-    if (cartItems.length === 0) {
-      console.error("Cart is empty");
-      return null;
-    }
-
     try {
+      if (cartItems.length === 0) {
+        showToast("Корзина пуста", "error");
+        return null;
+      }
+
+      // Generate order ID
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
       // Calculate total amount
       const totalAmount = cartItems.reduce(
         (sum, item) => sum + (item.flower?.price || 0) * item.quantity,
@@ -79,19 +86,20 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
       // Create order items
       const orderItems: OrderItem[] = cartItems.map((item) => ({
-        id: `${Date.now()}-${Math.random()}`,
-        orderId: `${Date.now()}`,
+        id: `order_item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        orderId,
         flowerId: item.flowerId,
         quantity: item.quantity,
         price: item.flower?.price || 0,
         flower: item.flower,
         createdAt: new Date(),
+        updatedAt: new Date(),
       }));
 
-      // Create order
+      // Create order object
       const newOrder: Order = {
-        id: `${Date.now()}`,
-        userId: "local",
+        id: orderId,
+        userId: user?.id || 'unknown',
         totalAmount,
         status: "PENDING",
         deliveryAddress: orderData.deliveryAddress,
@@ -102,15 +110,57 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         items: orderItems,
       };
 
-      // Add order to state
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      // Try to save to database via API first
+      let databaseSaveSuccess = false;
+      try {
+        const response = await fetch('/api/trpc/orders.createOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            json: {
+              deliveryAddress: orderData.deliveryAddress,
+              phoneNumber: orderData.phoneNumber,
+              notes: orderData.notes,
+            }
+          }),
+        });
 
-      // Clear cart
+        if (response.ok) {
+          databaseSaveSuccess = true;
+        }
+      } catch (error) {
+        databaseSaveSuccess = false;
+      }
+
+      // If database save failed, show error and don't save locally or clear cart
+      if (!databaseSaveSuccess) {
+        showToast("Ошибка при сохранении заказа. Попробуйте еще раз.", "error");
+        return null;
+      }
+
+      // Only save to localStorage and clear cart if database save was successful
+      const updatedOrders = [...orders, newOrder];
+      setOrders(updatedOrders);
+      
+      // Save to localStorage
+      try {
+        if (typeof window !== "undefined") {
+          localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updatedOrders));
+        }
+      } catch (error) {
+        // Silent error - localStorage save is not critical
+      }
+
+      // Clear cart only after successful order creation
       clearCart();
 
+      showToast("Заказ успешно создан!", "success");
       return newOrder;
+      
     } catch (error) {
-      console.error("Error creating order:", error);
+      showToast("Ошибка при создании заказа. Попробуйте еще раз.", "error");
       return null;
     }
   };

@@ -1,161 +1,189 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { initTelegram } from "~/utils/telegram";
 import { authenticateWithTelegram } from "~/utils/auth";
 import type { User } from "~/types";
 
+const USER_STORAGE_KEY = "seva-flowers-user";
+
 export function useTelegramAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const isInitialized = useRef(false);
+
+  // Function to save user to localStorage
+  const saveUserToStorage = (userData: User) => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+      }
+    } catch (error) {
+      // Silent error
+    }
+  };
+
+  // Function to load user from localStorage
+  const loadUserFromStorage = (): User | null => {
+    try {
+      if (typeof window !== "undefined") {
+        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+        if (storedUser) {
+          return JSON.parse(storedUser);
+        }
+      }
+    } catch (error) {
+      // Silent error
+    }
+    return null;
+  };
 
   // Function to get user data directly from Telegram WebApp
   const getUserFromWebApp = () => {
     try {
-      console.log('getUserFromWebApp called');
-      
-      if (typeof window === 'undefined') {
-        console.log('Window is not available (server-side rendering)');
+      if (typeof window === "undefined") {
         return null;
       }
-      
-      // Log all available Telegram WebApp data for debugging
-      console.log('Telegram object exists:', !!window.Telegram);
-      console.log('WebApp object exists:', !!window.Telegram?.WebApp);
-      console.log('initData exists:', !!window.Telegram?.WebApp?.initData);
-      console.log('initDataUnsafe exists:', !!window.Telegram?.WebApp?.initDataUnsafe);
-      
+
       if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-        console.log('Found user in initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe.user);
         const user = window.Telegram.WebApp.initDataUnsafe.user;
-        return {
-          id: user.id?.toString() || 'no-id',
-          telegramId: user.id?.toString() || 'no-telegram-id',
-          firstName: user.first_name || 'No',
+        const userData = {
+          id: user.id?.toString() || "no-id",
+          telegramId: user.id?.toString() || "no-telegram-id",
+          firstName: user.first_name || "No",
           lastName: user.last_name,
-          username: user.username || 'nousername',
-          photoUrl: user.photo_url || ''
+          username: user.username || "nousername",
+          photoUrl: user.photo_url || "",
         };
-      } else {
-        console.log('No user in initDataUnsafe');
+        saveUserToStorage(userData);
+        return userData;
       }
-      
+
       // Fallback to parsing initData directly
       if (window.Telegram?.WebApp?.initData) {
-        console.log('initData exists, trying to parse it');
         try {
           const params = new URLSearchParams(window.Telegram.WebApp.initData);
-          const userParam = params.get('user');
-          console.log('User param from initData:', userParam);
-          
+          const userParam = params.get("user");
+
           if (userParam) {
             const user = JSON.parse(decodeURIComponent(userParam));
-            console.log('Parsed user from initData:', user);
-            return {
-              id: user.id?.toString() || 'no-id',
-              telegramId: user.id?.toString() || 'no-telegram-id',
-              firstName: user.first_name || 'No',
+            const userData = {
+              id: user.id?.toString() || "no-id",
+              telegramId: user.id?.toString() || "no-telegram-id",
+              firstName: user.first_name || "No",
               lastName: user.last_name,
-              username: user.username || 'nousername',
-              photoUrl: user.photo_url || ''
+              username: user.username || "nousername",
+              photoUrl: user.photo_url || "",
             };
+            saveUserToStorage(userData);
+            return userData;
           }
         } catch (e) {
-          console.error('Error parsing initData:', e);
+          // Silent error
         }
-      } else {
-        console.log('initData is not available');
       }
-      
-      console.log('No user data found in WebApp');
+
       return null;
     } catch (error) {
-      console.error('Error in getUserFromWebApp:', error);
+      // Silent error
       return null;
     }
   };
 
   useEffect(() => {
-    console.log('Starting Telegram authentication...');
-    
+    // Prevent multiple initializations
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+
     const initAuth = () => {
       try {
-        console.log('Initializing Telegram WebApp...');
         initTelegram();
-        
-        // Debug: Log all available window properties
-        console.log('Window properties:', Object.keys(window).filter(k => k.toLowerCase().includes('telegram')));
-        
-        // Try to get user directly from WebApp first
-        console.log('Trying to get user from WebApp...');
-        const webAppUser = getUserFromWebApp();
-        
-        if (webAppUser) {
-          console.log('✅ Successfully got user from WebApp:', webAppUser);
-          setUser(webAppUser);
+
+        // First, try to load from localStorage
+        const storedUser = loadUserFromStorage();
+        if (storedUser) {
+          setUser(storedUser);
           return;
         }
-        
-        console.log('❌ Could not get user from WebApp, trying API authentication...');
-        
+
+        // Try to get user directly from WebApp first
+        const webAppUser = getUserFromWebApp();
+
+        if (webAppUser) {
+          setUser(webAppUser);
+
+          // Also try to authenticate with API to save to database
+          authenticateWithTelegram()
+            .then((userData) => {
+              if (userData?.success && userData?.user) {
+                // Silent success
+              }
+            })
+            .catch((error) => {
+              // Silent fallback
+            });
+
+          return;
+        }
+
         // Fallback to API authentication if WebApp data is not available
         authenticateWithTelegram()
           .then((userData) => {
-            console.log('API authentication response:', userData);
             if (userData?.success && userData?.user) {
-              console.log('✅ Using user from API:', userData.user);
               setUser(userData.user);
+              saveUserToStorage(userData.user);
             } else {
-              console.error('❌ Authentication failed: No user data received from API');
               // Show debug info in the UI
-              setUser({
-                id: 'debug-mode',
-                telegramId: 'debug-telegram-id',
-                firstName: 'Debug',
-                lastName: 'Mode',
-                username: 'debug_user',
-                photoUrl: ''
-              });
+              const debugUser = {
+                id: "debug-mode",
+                telegramId: "debug-telegram-id",
+                firstName: "Debug",
+                lastName: "Mode",
+                username: "debug_user",
+                photoUrl: "",
+              };
+              setUser(debugUser);
+              saveUserToStorage(debugUser);
             }
           })
           .catch((error) => {
-            console.error('❌ Authentication error:', error);
+            // Show debug info in the UI
+            const debugUser = {
+              id: "debug-mode",
+              telegramId: "debug-telegram-id",
+              firstName: "Debug",
+              lastName: "Mode",
+              username: "debug_user",
+              photoUrl: "",
+            };
+            setUser(debugUser);
+            saveUserToStorage(debugUser);
           });
-          
       } catch (error) {
-        console.error('❌ Initialization error:', error);
+        // Silent error
       }
     };
-    
+
     // Try to initialize immediately
-    console.log('Starting initialization...');
     initAuth();
-    
+
     // Also set up a retry mechanism in case Telegram WebApp loads after our initial attempt
-    const maxRetries = 5;
+    const maxRetries = 3;
     let retryCount = 0;
-    
+
     const retryInterval = setInterval(() => {
-      if (user) {
-        console.log('User data loaded, clearing retry interval');
-        clearInterval(retryInterval);
-        return;
-      }
-      
       if (retryCount >= maxRetries) {
-        console.log('Max retries reached, giving up');
         clearInterval(retryInterval);
         return;
       }
-      
-      console.log(`Retry ${retryCount + 1}/${maxRetries} to get Telegram data...`);
+
       initAuth();
       retryCount++;
-    }, 1000);
-    
+    }, 2000);
+
     return () => {
       clearInterval(retryInterval);
     };
-  }, [user]);
+  }, []); // Empty dependency array - only run once
 
   return { user };
 }

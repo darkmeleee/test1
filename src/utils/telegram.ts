@@ -68,28 +68,20 @@ export const telegram =
   typeof window !== "undefined" ? window.Telegram?.WebApp : null;
 
 export const initTelegram = () => {
-  console.log("Initializing Telegram..."); // Debug log
-
   // Wait a bit for Telegram WebApp to be available
   setTimeout(() => {
-    console.log("Window object:", typeof window); // Debug log
-
     // Store debug info in window for display
     if (typeof window !== "undefined") {
       (window as any).telegramDebug = {
-        windowExists: true,
-        telegramExists: !!window.Telegram,
-        webappExists: !!window.Telegram?.WebApp,
+        telegram: !!telegram,
+        webApp: !!telegram,
         initData: window.Telegram?.WebApp?.initData || "EMPTY",
         initDataUnsafe: window.Telegram?.WebApp?.initDataUnsafe || "EMPTY",
       };
-      console.log("Debug info stored:", (window as any).telegramDebug);
     }
 
     if (telegram) {
       initTelegramWebApp();
-    } else {
-      console.log("Telegram object not available - running in browser mode"); // Debug log
     }
   }, 1000); // Wait 1 second for script to load
 };
@@ -128,8 +120,6 @@ const initTelegramWebApp = () => {
   if (theme.button_text_color) {
     root.style.setProperty("--tg-button-text-color", theme.button_text_color);
   }
-
-  console.log("Telegram initialized successfully"); // Debug log
 };
 
 export const hapticImpact = (style: "light" | "medium" | "heavy" = "light") => {
