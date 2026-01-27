@@ -113,10 +113,14 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       // Try to save to database via API first
       let databaseSaveSuccess = false;
       try {
+        // Get Telegram data from window if available
+        const telegramData = typeof window !== "undefined" ? window.Telegram?.WebApp?.initData : null;
+        
         const response = await fetch('/api/trpc/orders.createOrder', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(telegramData && { 'x-telegram-data': telegramData }),
           },
           body: JSON.stringify({
             json: {

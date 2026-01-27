@@ -110,18 +110,7 @@ export function useTelegramAuth() {
 
         if (webAppUser) {
           setUser(webAppUser);
-
-          // Also try to authenticate with API to save to database
-          authenticateWithTelegram()
-            .then((userData) => {
-              if (userData?.success && userData?.user) {
-                // Silent success
-              }
-            })
-            .catch((error) => {
-              // Silent fallback
-            });
-
+          // Removed the API authentication call
           return;
         }
 
