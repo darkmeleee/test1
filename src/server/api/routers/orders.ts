@@ -15,7 +15,7 @@ export const ordersRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         // Get user's cart items
-        const cartItems = await ctx.db.cart.findMany({
+        const cartItems = await ctx.db.cartItem.findMany({
           where: { userId: ctx.user.id },
           include: { flower: true },
         });
@@ -56,7 +56,7 @@ export const ordersRouter = createTRPCRouter({
         });
 
         // Clear cart
-        await ctx.db.cart.deleteMany({
+        await ctx.db.cartItem.deleteMany({
           where: { userId: ctx.user.id },
         });
 

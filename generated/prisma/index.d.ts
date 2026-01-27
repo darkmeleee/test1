@@ -1346,13 +1346,11 @@ export namespace Prisma {
   export type FlowerCountOutputType = {
     cartItems: number
     orderItems: number
-    orders: number
   }
 
   export type FlowerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cartItems?: boolean | FlowerCountOutputTypeCountCartItemsArgs
     orderItems?: boolean | FlowerCountOutputTypeCountOrderItemsArgs
-    orders?: boolean | FlowerCountOutputTypeCountOrdersArgs
   }
 
   // Custom InputTypes
@@ -1378,13 +1376,6 @@ export namespace Prisma {
    */
   export type FlowerCountOutputTypeCountOrderItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderItemWhereInput
-  }
-
-  /**
-   * FlowerCountOutputType without action
-   */
-  export type FlowerCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OrderWhereInput
   }
 
 
@@ -3678,7 +3669,6 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     cartItems?: boolean | Flower$cartItemsArgs<ExtArgs>
     orderItems?: boolean | Flower$orderItemsArgs<ExtArgs>
-    orders?: boolean | Flower$ordersArgs<ExtArgs>
     _count?: boolean | FlowerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["flower"]>
 
@@ -3713,7 +3703,6 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     cartItems?: boolean | Flower$cartItemsArgs<ExtArgs>
     orderItems?: boolean | Flower$orderItemsArgs<ExtArgs>
-    orders?: boolean | Flower$ordersArgs<ExtArgs>
     _count?: boolean | FlowerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type FlowerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3726,7 +3715,6 @@ export namespace Prisma {
       category: Prisma.$CategoryPayload<ExtArgs>
       cartItems: Prisma.$CartItemPayload<ExtArgs>[]
       orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
-      orders: Prisma.$OrderPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4106,7 +4094,6 @@ export namespace Prisma {
     category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     cartItems<T extends Flower$cartItemsArgs<ExtArgs> = {}>(args?: Subset<T, Flower$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany"> | Null>
     orderItems<T extends Flower$orderItemsArgs<ExtArgs> = {}>(args?: Subset<T, Flower$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany"> | Null>
-    orders<T extends Flower$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Flower$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4501,26 +4488,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
-  }
-
-  /**
-   * Flower.orders
-   */
-  export type Flower$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Order
-     */
-    select?: OrderSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrderInclude<ExtArgs> | null
-    where?: OrderWhereInput
-    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
-    cursor?: OrderWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
   }
 
   /**
@@ -5553,7 +5520,6 @@ export namespace Prisma {
     notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    flowerId: string | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -5566,7 +5532,6 @@ export namespace Prisma {
     notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    flowerId: string | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -5579,7 +5544,6 @@ export namespace Prisma {
     notes: number
     createdAt: number
     updatedAt: number
-    flowerId: number
     _all: number
   }
 
@@ -5602,7 +5566,6 @@ export namespace Prisma {
     notes?: true
     createdAt?: true
     updatedAt?: true
-    flowerId?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -5615,7 +5578,6 @@ export namespace Prisma {
     notes?: true
     createdAt?: true
     updatedAt?: true
-    flowerId?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -5628,7 +5590,6 @@ export namespace Prisma {
     notes?: true
     createdAt?: true
     updatedAt?: true
-    flowerId?: true
     _all?: true
   }
 
@@ -5728,7 +5689,6 @@ export namespace Prisma {
     notes: string | null
     createdAt: Date
     updatedAt: Date
-    flowerId: string | null
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -5760,10 +5720,8 @@ export namespace Prisma {
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    flowerId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
-    flower?: boolean | Order$flowerArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -5777,9 +5735,7 @@ export namespace Prisma {
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    flowerId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    flower?: boolean | Order$flowerArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectScalar = {
@@ -5792,18 +5748,15 @@ export namespace Prisma {
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    flowerId?: boolean
   }
 
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
-    flower?: boolean | Order$flowerArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    flower?: boolean | Order$flowerArgs<ExtArgs>
   }
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5811,7 +5764,6 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       items: Prisma.$OrderItemPayload<ExtArgs>[]
-      flower: Prisma.$FlowerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5823,7 +5775,6 @@ export namespace Prisma {
       notes: string | null
       createdAt: Date
       updatedAt: Date
-      flowerId: string | null
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -6190,7 +6141,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany"> | Null>
-    flower<T extends Order$flowerArgs<ExtArgs> = {}>(args?: Subset<T, Order$flowerArgs<ExtArgs>>): Prisma__FlowerClient<$Result.GetResult<Prisma.$FlowerPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6229,7 +6179,6 @@ export namespace Prisma {
     readonly notes: FieldRef<"Order", 'String'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
-    readonly flowerId: FieldRef<"Order", 'String'>
   }
     
 
@@ -6565,21 +6514,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
-  }
-
-  /**
-   * Order.flower
-   */
-  export type Order$flowerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Flower
-     */
-    select?: FlowerSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FlowerInclude<ExtArgs> | null
-    where?: FlowerWhereInput
   }
 
   /**
@@ -7664,8 +7598,7 @@ export namespace Prisma {
     phoneNumber: 'phoneNumber',
     notes: 'notes',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    flowerId: 'flowerId'
+    updatedAt: 'updatedAt'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -7935,7 +7868,6 @@ export namespace Prisma {
     category?: XOR<CategoryRelationFilter, CategoryWhereInput>
     cartItems?: CartItemListRelationFilter
     orderItems?: OrderItemListRelationFilter
-    orders?: OrderListRelationFilter
   }
 
   export type FlowerOrderByWithRelationInput = {
@@ -7952,7 +7884,6 @@ export namespace Prisma {
     category?: CategoryOrderByWithRelationInput
     cartItems?: CartItemOrderByRelationAggregateInput
     orderItems?: OrderItemOrderByRelationAggregateInput
-    orders?: OrderOrderByRelationAggregateInput
   }
 
   export type FlowerWhereUniqueInput = Prisma.AtLeast<{
@@ -7972,7 +7903,6 @@ export namespace Prisma {
     category?: XOR<CategoryRelationFilter, CategoryWhereInput>
     cartItems?: CartItemListRelationFilter
     orderItems?: OrderItemListRelationFilter
-    orders?: OrderListRelationFilter
   }, "id">
 
   export type FlowerOrderByWithAggregationInput = {
@@ -8088,10 +8018,8 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
-    flowerId?: StringNullableFilter<"Order"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     items?: OrderItemListRelationFilter
-    flower?: XOR<FlowerNullableRelationFilter, FlowerWhereInput> | null
   }
 
   export type OrderOrderByWithRelationInput = {
@@ -8104,10 +8032,8 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    flowerId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     items?: OrderItemOrderByRelationAggregateInput
-    flower?: FlowerOrderByWithRelationInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -8123,10 +8049,8 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
-    flowerId?: StringNullableFilter<"Order"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     items?: OrderItemListRelationFilter
-    flower?: XOR<FlowerNullableRelationFilter, FlowerWhereInput> | null
   }, "id">
 
   export type OrderOrderByWithAggregationInput = {
@@ -8139,7 +8063,6 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    flowerId?: SortOrderInput | SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -8160,7 +8083,6 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"Order"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
-    flowerId?: StringNullableWithAggregatesFilter<"Order"> | string | null
   }
 
   export type OrderItemWhereInput = {
@@ -8400,7 +8322,6 @@ export namespace Prisma {
     category: CategoryCreateNestedOneWithoutFlowersInput
     cartItems?: CartItemCreateNestedManyWithoutFlowerInput
     orderItems?: OrderItemCreateNestedManyWithoutFlowerInput
-    orders?: OrderCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerUncheckedCreateInput = {
@@ -8416,7 +8337,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     cartItems?: CartItemUncheckedCreateNestedManyWithoutFlowerInput
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutFlowerInput
-    orders?: OrderUncheckedCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerUpdateInput = {
@@ -8432,7 +8352,6 @@ export namespace Prisma {
     category?: CategoryUpdateOneRequiredWithoutFlowersNestedInput
     cartItems?: CartItemUpdateManyWithoutFlowerNestedInput
     orderItems?: OrderItemUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerUncheckedUpdateInput = {
@@ -8448,7 +8367,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cartItems?: CartItemUncheckedUpdateManyWithoutFlowerNestedInput
     orderItems?: OrderItemUncheckedUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerCreateManyInput = {
@@ -8561,7 +8479,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
-    flower?: FlowerCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateInput = {
@@ -8574,7 +8491,6 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    flowerId?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -8589,7 +8505,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
-    flower?: FlowerUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
@@ -8602,7 +8517,6 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flowerId?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -8616,7 +8530,6 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    flowerId?: string | null
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -8640,7 +8553,6 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flowerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateInput = {
@@ -9080,11 +8992,6 @@ export namespace Prisma {
     quantity?: SortOrder
   }
 
-  export type FlowerNullableRelationFilter = {
-    is?: FlowerWhereInput | null
-    isNot?: FlowerWhereInput | null
-  }
-
   export type OrderCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -9095,7 +9002,6 @@ export namespace Prisma {
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    flowerId?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -9112,7 +9018,6 @@ export namespace Prisma {
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    flowerId?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -9125,7 +9030,6 @@ export namespace Prisma {
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    flowerId?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -9340,13 +9244,6 @@ export namespace Prisma {
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
   }
 
-  export type OrderCreateNestedManyWithoutFlowerInput = {
-    create?: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput> | OrderCreateWithoutFlowerInput[] | OrderUncheckedCreateWithoutFlowerInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutFlowerInput | OrderCreateOrConnectWithoutFlowerInput[]
-    createMany?: OrderCreateManyFlowerInputEnvelope
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-  }
-
   export type CartItemUncheckedCreateNestedManyWithoutFlowerInput = {
     create?: XOR<CartItemCreateWithoutFlowerInput, CartItemUncheckedCreateWithoutFlowerInput> | CartItemCreateWithoutFlowerInput[] | CartItemUncheckedCreateWithoutFlowerInput[]
     connectOrCreate?: CartItemCreateOrConnectWithoutFlowerInput | CartItemCreateOrConnectWithoutFlowerInput[]
@@ -9359,13 +9256,6 @@ export namespace Prisma {
     connectOrCreate?: OrderItemCreateOrConnectWithoutFlowerInput | OrderItemCreateOrConnectWithoutFlowerInput[]
     createMany?: OrderItemCreateManyFlowerInputEnvelope
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
-  }
-
-  export type OrderUncheckedCreateNestedManyWithoutFlowerInput = {
-    create?: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput> | OrderCreateWithoutFlowerInput[] | OrderUncheckedCreateWithoutFlowerInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutFlowerInput | OrderCreateOrConnectWithoutFlowerInput[]
-    createMany?: OrderCreateManyFlowerInputEnvelope
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -9416,20 +9306,6 @@ export namespace Prisma {
     deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
   }
 
-  export type OrderUpdateManyWithoutFlowerNestedInput = {
-    create?: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput> | OrderCreateWithoutFlowerInput[] | OrderUncheckedCreateWithoutFlowerInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutFlowerInput | OrderCreateOrConnectWithoutFlowerInput[]
-    upsert?: OrderUpsertWithWhereUniqueWithoutFlowerInput | OrderUpsertWithWhereUniqueWithoutFlowerInput[]
-    createMany?: OrderCreateManyFlowerInputEnvelope
-    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    update?: OrderUpdateWithWhereUniqueWithoutFlowerInput | OrderUpdateWithWhereUniqueWithoutFlowerInput[]
-    updateMany?: OrderUpdateManyWithWhereWithoutFlowerInput | OrderUpdateManyWithWhereWithoutFlowerInput[]
-    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
-  }
-
   export type CartItemUncheckedUpdateManyWithoutFlowerNestedInput = {
     create?: XOR<CartItemCreateWithoutFlowerInput, CartItemUncheckedCreateWithoutFlowerInput> | CartItemCreateWithoutFlowerInput[] | CartItemUncheckedCreateWithoutFlowerInput[]
     connectOrCreate?: CartItemCreateOrConnectWithoutFlowerInput | CartItemCreateOrConnectWithoutFlowerInput[]
@@ -9456,20 +9332,6 @@ export namespace Prisma {
     update?: OrderItemUpdateWithWhereUniqueWithoutFlowerInput | OrderItemUpdateWithWhereUniqueWithoutFlowerInput[]
     updateMany?: OrderItemUpdateManyWithWhereWithoutFlowerInput | OrderItemUpdateManyWithWhereWithoutFlowerInput[]
     deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
-  }
-
-  export type OrderUncheckedUpdateManyWithoutFlowerNestedInput = {
-    create?: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput> | OrderCreateWithoutFlowerInput[] | OrderUncheckedCreateWithoutFlowerInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutFlowerInput | OrderCreateOrConnectWithoutFlowerInput[]
-    upsert?: OrderUpsertWithWhereUniqueWithoutFlowerInput | OrderUpsertWithWhereUniqueWithoutFlowerInput[]
-    createMany?: OrderCreateManyFlowerInputEnvelope
-    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    update?: OrderUpdateWithWhereUniqueWithoutFlowerInput | OrderUpdateWithWhereUniqueWithoutFlowerInput[]
-    updateMany?: OrderUpdateManyWithWhereWithoutFlowerInput | OrderUpdateManyWithWhereWithoutFlowerInput[]
-    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutCartItemsInput = {
@@ -9513,12 +9375,6 @@ export namespace Prisma {
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
   }
 
-  export type FlowerCreateNestedOneWithoutOrdersInput = {
-    create?: XOR<FlowerCreateWithoutOrdersInput, FlowerUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: FlowerCreateOrConnectWithoutOrdersInput
-    connect?: FlowerWhereUniqueInput
-  }
-
   export type OrderItemUncheckedCreateNestedManyWithoutOrderInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -9546,16 +9402,6 @@ export namespace Prisma {
     update?: OrderItemUpdateWithWhereUniqueWithoutOrderInput | OrderItemUpdateWithWhereUniqueWithoutOrderInput[]
     updateMany?: OrderItemUpdateManyWithWhereWithoutOrderInput | OrderItemUpdateManyWithWhereWithoutOrderInput[]
     deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
-  }
-
-  export type FlowerUpdateOneWithoutOrdersNestedInput = {
-    create?: XOR<FlowerCreateWithoutOrdersInput, FlowerUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: FlowerCreateOrConnectWithoutOrdersInput
-    upsert?: FlowerUpsertWithoutOrdersInput
-    disconnect?: FlowerWhereInput | boolean
-    delete?: FlowerWhereInput | boolean
-    connect?: FlowerWhereUniqueInput
-    update?: XOR<XOR<FlowerUpdateToOneWithWhereWithoutOrdersInput, FlowerUpdateWithoutOrdersInput>, FlowerUncheckedUpdateWithoutOrdersInput>
   }
 
   export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
@@ -9801,7 +9647,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemCreateNestedManyWithoutOrderInput
-    flower?: FlowerCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutUserInput = {
@@ -9813,7 +9658,6 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    flowerId?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -9884,7 +9728,6 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
-    flowerId?: StringNullableFilter<"Order"> | string | null
   }
 
   export type FlowerCreateWithoutCategoryInput = {
@@ -9899,7 +9742,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     cartItems?: CartItemCreateNestedManyWithoutFlowerInput
     orderItems?: OrderItemCreateNestedManyWithoutFlowerInput
-    orders?: OrderCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerUncheckedCreateWithoutCategoryInput = {
@@ -9914,7 +9756,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     cartItems?: CartItemUncheckedCreateNestedManyWithoutFlowerInput
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutFlowerInput
-    orders?: OrderUncheckedCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerCreateOrConnectWithoutCategoryInput = {
@@ -10032,42 +9873,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type OrderCreateWithoutFlowerInput = {
-    id?: string
-    totalAmount: number
-    status?: string
-    deliveryAddress?: string | null
-    phoneNumber?: string | null
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutOrdersInput
-    items?: OrderItemCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderUncheckedCreateWithoutFlowerInput = {
-    id?: string
-    userId: string
-    totalAmount: number
-    status?: string
-    deliveryAddress?: string | null
-    phoneNumber?: string | null
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderCreateOrConnectWithoutFlowerInput = {
-    where: OrderWhereUniqueInput
-    create: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput>
-  }
-
-  export type OrderCreateManyFlowerInputEnvelope = {
-    data: OrderCreateManyFlowerInput | OrderCreateManyFlowerInput[]
-    skipDuplicates?: boolean
-  }
-
   export type CategoryUpsertWithoutFlowersInput = {
     update: XOR<CategoryUpdateWithoutFlowersInput, CategoryUncheckedUpdateWithoutFlowersInput>
     create: XOR<CategoryCreateWithoutFlowersInput, CategoryUncheckedCreateWithoutFlowersInput>
@@ -10139,22 +9944,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"OrderItem"> | Date | string
   }
 
-  export type OrderUpsertWithWhereUniqueWithoutFlowerInput = {
-    where: OrderWhereUniqueInput
-    update: XOR<OrderUpdateWithoutFlowerInput, OrderUncheckedUpdateWithoutFlowerInput>
-    create: XOR<OrderCreateWithoutFlowerInput, OrderUncheckedCreateWithoutFlowerInput>
-  }
-
-  export type OrderUpdateWithWhereUniqueWithoutFlowerInput = {
-    where: OrderWhereUniqueInput
-    data: XOR<OrderUpdateWithoutFlowerInput, OrderUncheckedUpdateWithoutFlowerInput>
-  }
-
-  export type OrderUpdateManyWithWhereWithoutFlowerInput = {
-    where: OrderScalarWhereInput
-    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutFlowerInput>
-  }
-
   export type UserCreateWithoutCartItemsInput = {
     id?: string
     telegramId: string
@@ -10200,7 +9989,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutFlowersInput
     orderItems?: OrderItemCreateNestedManyWithoutFlowerInput
-    orders?: OrderCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerUncheckedCreateWithoutCartItemsInput = {
@@ -10215,7 +10003,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutFlowerInput
-    orders?: OrderUncheckedCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerCreateOrConnectWithoutCartItemsInput = {
@@ -10285,7 +10072,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutFlowersNestedInput
     orderItems?: OrderItemUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerUncheckedUpdateWithoutCartItemsInput = {
@@ -10300,7 +10086,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutFlowerNestedInput
   }
 
   export type UserCreateWithoutOrdersInput = {
@@ -10362,41 +10147,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type FlowerCreateWithoutOrdersInput = {
-    id?: string
-    name: string
-    price: number
-    image: string
-    attributesJson?: string
-    inStock?: boolean
-    deliveryNextDay?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    category: CategoryCreateNestedOneWithoutFlowersInput
-    cartItems?: CartItemCreateNestedManyWithoutFlowerInput
-    orderItems?: OrderItemCreateNestedManyWithoutFlowerInput
-  }
-
-  export type FlowerUncheckedCreateWithoutOrdersInput = {
-    id?: string
-    name: string
-    price: number
-    image: string
-    categoryId: string
-    attributesJson?: string
-    inStock?: boolean
-    deliveryNextDay?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    cartItems?: CartItemUncheckedCreateNestedManyWithoutFlowerInput
-    orderItems?: OrderItemUncheckedCreateNestedManyWithoutFlowerInput
-  }
-
-  export type FlowerCreateOrConnectWithoutOrdersInput = {
-    where: FlowerWhereUniqueInput
-    create: XOR<FlowerCreateWithoutOrdersInput, FlowerUncheckedCreateWithoutOrdersInput>
-  }
-
   export type UserUpsertWithoutOrdersInput = {
     update: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
     create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
@@ -10452,47 +10202,6 @@ export namespace Prisma {
     data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutOrderInput>
   }
 
-  export type FlowerUpsertWithoutOrdersInput = {
-    update: XOR<FlowerUpdateWithoutOrdersInput, FlowerUncheckedUpdateWithoutOrdersInput>
-    create: XOR<FlowerCreateWithoutOrdersInput, FlowerUncheckedCreateWithoutOrdersInput>
-    where?: FlowerWhereInput
-  }
-
-  export type FlowerUpdateToOneWithWhereWithoutOrdersInput = {
-    where?: FlowerWhereInput
-    data: XOR<FlowerUpdateWithoutOrdersInput, FlowerUncheckedUpdateWithoutOrdersInput>
-  }
-
-  export type FlowerUpdateWithoutOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    image?: StringFieldUpdateOperationsInput | string
-    attributesJson?: StringFieldUpdateOperationsInput | string
-    inStock?: BoolFieldUpdateOperationsInput | boolean
-    deliveryNextDay?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    category?: CategoryUpdateOneRequiredWithoutFlowersNestedInput
-    cartItems?: CartItemUpdateManyWithoutFlowerNestedInput
-    orderItems?: OrderItemUpdateManyWithoutFlowerNestedInput
-  }
-
-  export type FlowerUncheckedUpdateWithoutOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    image?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    attributesJson?: StringFieldUpdateOperationsInput | string
-    inStock?: BoolFieldUpdateOperationsInput | boolean
-    deliveryNextDay?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    cartItems?: CartItemUncheckedUpdateManyWithoutFlowerNestedInput
-    orderItems?: OrderItemUncheckedUpdateManyWithoutFlowerNestedInput
-  }
-
   export type OrderCreateWithoutItemsInput = {
     id?: string
     totalAmount: number
@@ -10503,7 +10212,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
-    flower?: FlowerCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutItemsInput = {
@@ -10516,7 +10224,6 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    flowerId?: string | null
   }
 
   export type OrderCreateOrConnectWithoutItemsInput = {
@@ -10536,7 +10243,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutFlowersInput
     cartItems?: CartItemCreateNestedManyWithoutFlowerInput
-    orders?: OrderCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerUncheckedCreateWithoutOrderItemsInput = {
@@ -10551,7 +10257,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     cartItems?: CartItemUncheckedCreateNestedManyWithoutFlowerInput
-    orders?: OrderUncheckedCreateNestedManyWithoutFlowerInput
   }
 
   export type FlowerCreateOrConnectWithoutOrderItemsInput = {
@@ -10580,7 +10285,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    flower?: FlowerUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -10593,7 +10297,6 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flowerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FlowerUpsertWithoutOrderItemsInput = {
@@ -10619,7 +10322,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutFlowersNestedInput
     cartItems?: CartItemUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerUncheckedUpdateWithoutOrderItemsInput = {
@@ -10634,7 +10336,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cartItems?: CartItemUncheckedUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutFlowerNestedInput
   }
 
   export type CartItemCreateManyUserInput = {
@@ -10654,7 +10355,6 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    flowerId?: string | null
   }
 
   export type CartItemUpdateWithoutUserInput = {
@@ -10691,7 +10391,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUpdateManyWithoutOrderNestedInput
-    flower?: FlowerUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutUserInput = {
@@ -10703,7 +10402,6 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flowerId?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -10716,7 +10414,6 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flowerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FlowerCreateManyCategoryInput = {
@@ -10743,7 +10440,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cartItems?: CartItemUpdateManyWithoutFlowerNestedInput
     orderItems?: OrderItemUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerUncheckedUpdateWithoutCategoryInput = {
@@ -10758,7 +10454,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cartItems?: CartItemUncheckedUpdateManyWithoutFlowerNestedInput
     orderItems?: OrderItemUncheckedUpdateManyWithoutFlowerNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutFlowerNestedInput
   }
 
   export type FlowerUncheckedUpdateManyWithoutCategoryInput = {
@@ -10787,18 +10482,6 @@ export namespace Prisma {
     quantity: number
     price: number
     createdAt?: Date | string
-  }
-
-  export type OrderCreateManyFlowerInput = {
-    id?: string
-    userId: string
-    totalAmount: number
-    status?: string
-    deliveryAddress?: string | null
-    phoneNumber?: string | null
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type CartItemUpdateWithoutFlowerInput = {
@@ -10847,44 +10530,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type OrderUpdateWithoutFlowerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    totalAmount?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
-    deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    items?: OrderItemUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateWithoutFlowerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    totalAmount?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
-    deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateManyWithoutFlowerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    totalAmount?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
-    deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderItemCreateManyOrderInput = {

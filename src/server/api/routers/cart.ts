@@ -6,14 +6,25 @@ export const cartRouter = createTRPCRouter({
   // Get user's cart
   getUserCart: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const cart = await ctx.db.cart.findMany({
+      const cart = await ctx.db.cartItem.findMany({
         where: { userId: ctx.user.id },
         include: {
           flower: true,
         },
       });
 
-      return { items: cart };
+      // Transform the data to match frontend types
+      const transformedCart = cart.map((item) => ({
+        ...item,
+        flower: item.flower
+          ? {
+              ...item.flower,
+              attributes: JSON.parse(item.flower.attributesJson || "[]"),
+            }
+          : undefined,
+      }));
+
+      return { items: transformedCart };
     } catch (error) {
       console.error("Error getting user cart:", error);
       throw new TRPCError({
@@ -34,7 +45,7 @@ export const cartRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         // Check if item already in cart
-        const existingItem = await ctx.db.cart.findFirst({
+        const existingItem = await ctx.db.cartItem.findFirst({
           where: {
             userId: ctx.user.id,
             flowerId: input.flowerId,
@@ -43,26 +54,46 @@ export const cartRouter = createTRPCRouter({
 
         if (existingItem) {
           // Update quantity if item exists
-          return await ctx.db.cart.update({
-            where: { id: existingItem.id },
-            data: {
-              quantity: {
-                increment: input.quantity,
+          return await ctx.db.cartItem
+            .update({
+              where: { id: existingItem.id },
+              data: {
+                quantity: {
+                  increment: input.quantity,
+                },
               },
-            },
-            include: { flower: true },
-          });
+              include: { flower: true },
+            })
+            .then((item) => ({
+              ...item,
+              flower: item.flower
+                ? {
+                    ...item.flower,
+                    attributes: JSON.parse(item.flower.attributesJson || "[]"),
+                  }
+                : undefined,
+            }));
         }
 
         // Add new item to cart
-        return await ctx.db.cart.create({
-          data: {
-            userId: ctx.user.id,
-            flowerId: input.flowerId,
-            quantity: input.quantity,
-          },
-          include: { flower: true },
-        });
+        return await ctx.db.cartItem
+          .create({
+            data: {
+              userId: ctx.user.id,
+              flowerId: input.flowerId,
+              quantity: input.quantity,
+            },
+            include: { flower: true },
+          })
+          .then((item) => ({
+            ...item,
+            flower: item.flower
+              ? {
+                  ...item.flower,
+                  attributes: JSON.parse(item.flower.attributesJson || "[]"),
+                }
+              : undefined,
+          }));
       } catch (error) {
         console.error("Error adding to cart:", error);
         throw new TRPCError({
@@ -81,7 +112,7 @@ export const cartRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        return await ctx.db.cart.deleteMany({
+        return await ctx.db.cartItem.deleteMany({
           where: {
             userId: ctx.user.id,
             flowerId: input.flowerId,
@@ -108,7 +139,7 @@ export const cartRouter = createTRPCRouter({
       try {
         if (input.quantity <= 0) {
           // If quantity is 0 or less, remove the item
-          return await ctx.db.cart.deleteMany({
+          return await ctx.db.cartItem.deleteMany({
             where: {
               userId: ctx.user.id,
               flowerId: input.flowerId,
@@ -116,7 +147,7 @@ export const cartRouter = createTRPCRouter({
           });
         }
 
-        return await ctx.db.cart.updateMany({
+        return await ctx.db.cartItem.updateMany({
           where: {
             userId: ctx.user.id,
             flowerId: input.flowerId,
@@ -137,7 +168,7 @@ export const cartRouter = createTRPCRouter({
   // Clear cart
   clearCart: protectedProcedure.mutation(async ({ ctx }) => {
     try {
-      return await ctx.db.cart.deleteMany({
+      return await ctx.db.cartItem.deleteMany({
         where: { userId: ctx.user.id },
       });
     } catch (error) {

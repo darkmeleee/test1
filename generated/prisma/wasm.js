@@ -174,8 +174,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   phoneNumber: 'phoneNumber',
   notes: 'notes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  flowerId: 'flowerId'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.OrderItemScalarFieldEnum = {

@@ -11,27 +11,18 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
+import type { User } from "~/types";
 
-// Basic User type that matches our Prisma schema
-type User = {
-  id: string;
-  telegramId: string;
-  username?: string | null;
-  firstName: string;
-  lastName?: string | null;
-  photoUrl?: string | null;
-};
-
-type AuthUser = User | null;
-
-// Extend the TRPC context type to include our custom context
-declare module "@trpc/server" {
-  interface CreateTRPCContextOptions {
-    user: AuthUser;
-    headers: Headers;
-    db: typeof db;
-  }
+// Create context type
+interface CreateContextOptions {
+  headers: Headers;
+  user: User | null;
 }
+
+// This is the actual context we'll use in procedures
+type Context = CreateContextOptions & {
+  db: typeof db;
+};
 
 /**
  * 1. CONTEXT
@@ -69,7 +60,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -150,8 +141,9 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(
 
     return next({
       ctx: {
+        ...ctx,
         // This ensures the user is non-null in the next middleware
-        user: ctx.user,
+        user: ctx.user as User,
       },
     });
   }),
