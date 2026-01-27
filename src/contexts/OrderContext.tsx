@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import type { Order, OrderItem } from "~/types";
+import type { CartItem, Order, OrderItem } from "~/types";
 import { useCart } from "./CartContext";
 import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import { useToast } from "~/hooks/useToast";
@@ -22,6 +22,7 @@ interface OrderContextType {
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 const ORDERS_STORAGE_KEY = "seva-flowers-orders";
+const CART_STORAGE_KEY = "seva-flowers-cart";
 
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -77,7 +78,22 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      if (cartItems.length === 0) {
+      let itemsForOrder: CartItem[] = cartItems;
+      try {
+        if (typeof window !== "undefined") {
+          const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+          if (storedCart) {
+            const parsedCart = JSON.parse(storedCart);
+            if (Array.isArray(parsedCart)) {
+              itemsForOrder = parsedCart as CartItem[];
+            }
+          }
+        }
+      } catch (error) {
+        // Silent error
+      }
+
+      if (itemsForOrder.length === 0) {
         showToast("Корзина пуста", "error");
         return null;
       }
