@@ -9,12 +9,12 @@ interface HeaderProps {
 export default function Header({ user }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-brand-50 dark:bg-ink-900 shadow-sm">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Location */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
-              <Image src="/l.svg" alt="Расцвет" width={120} height={32} priority />
+              <Image src="/l.svg" alt="Расцвет" width={160} height={44} priority />
             </div>
           </div>
 

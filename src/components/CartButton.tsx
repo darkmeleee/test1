@@ -10,16 +10,14 @@ export default function CartButton({ count, total, onClick }: CartButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-24 right-4 flex items-center space-x-2 rounded-full bg-brand-600 px-4 py-3 text-white shadow-lg hover:bg-brand-700 transition-colors z-40"
+      title={`Корзина: ${count} · ${total} ₽`}
+      aria-label={`Открыть корзину. Товаров: ${count}. Сумма: ${total} ₽.`}
+      className="fixed bottom-24 right-4 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-colors hover:bg-brand-700"
     >
-      <ShoppingCart className="h-5 w-5" />
-      <div className="flex flex-col items-start">
-        <div className="text-xs opacity-90">Корзина</div>
-        <div className="flex items-center space-x-2">
-          <span className="font-bold">{count}</span>
-          <span className="text-sm">{total} ₽</span>
-        </div>
-      </div>
+      <ShoppingCart className="h-6 w-6" />
+      <span className="absolute -top-1 -right-1 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-ink-900 px-1.5 py-0.5 text-xs font-bold text-white">
+        {count}
+      </span>
     </button>
   );
 }

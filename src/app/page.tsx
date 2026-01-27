@@ -66,7 +66,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-brand-50 dark:bg-ink-900">
       <Header user={user} />
       
-      <main className="container mx-auto px-4 py-6 pb-20">
+      <main className="container mx-auto px-4 py-6 pb-32">
         <CategoryFilter
           categories={(categories || []) as Category[]}
           filter={filter}
