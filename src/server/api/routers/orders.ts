@@ -61,7 +61,7 @@ export const ordersRouter = createTRPCRouter({
         });
 
         // Return order with items
-        return await ctx.db.order.findUnique({
+        const orderWithItems = await ctx.db.order.findUnique({
           where: { id: order.id },
           include: {
             items: {
@@ -69,6 +69,31 @@ export const ordersRouter = createTRPCRouter({
             },
           },
         });
+
+        // Transform the data to match frontend types
+        if (orderWithItems) {
+          return {
+            ...orderWithItems,
+            status: orderWithItems.status as
+              | "PENDING"
+              | "CONFIRMED"
+              | "DELIVERED"
+              | "CANCELLED",
+            deliveryAddress: orderWithItems.deliveryAddress || undefined,
+            phoneNumber: orderWithItems.phoneNumber || undefined,
+            notes: orderWithItems.notes || undefined,
+            items: orderWithItems.items.map((item) => ({
+              ...item,
+              flower: item.flower
+                ? {
+                    ...item.flower,
+                    attributes: JSON.parse(item.flower.attributesJson || "[]"),
+                  }
+                : undefined,
+            })),
+          };
+        }
+        return orderWithItems;
       } catch (error) {
         console.error("Error creating order:", error);
         throw new TRPCError({
@@ -81,7 +106,7 @@ export const ordersRouter = createTRPCRouter({
   // Get user's orders
   getUserOrders: protectedProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.db.order.findMany({
+      const orders = await ctx.db.order.findMany({
         where: { userId: ctx.user.id },
         include: {
           items: {
@@ -90,6 +115,28 @@ export const ordersRouter = createTRPCRouter({
         },
         orderBy: { createdAt: "desc" },
       });
+
+      // Transform the data to match frontend types
+      return orders.map((order) => ({
+        ...order,
+        status: order.status as
+          | "PENDING"
+          | "CONFIRMED"
+          | "DELIVERED"
+          | "CANCELLED",
+        deliveryAddress: order.deliveryAddress || undefined,
+        phoneNumber: order.phoneNumber || undefined,
+        notes: order.notes || undefined,
+        items: order.items.map((item) => ({
+          ...item,
+          flower: item.flower
+            ? {
+                ...item.flower,
+                attributes: JSON.parse(item.flower.attributesJson || "[]"),
+              }
+            : undefined,
+        })),
+      }));
     } catch (error) {
       console.error("Error getting user orders:", error);
       throw new TRPCError({
@@ -127,7 +174,27 @@ export const ordersRouter = createTRPCRouter({
           });
         }
 
-        return order;
+        // Transform the data to match frontend types
+        return {
+          ...order,
+          status: order.status as
+            | "PENDING"
+            | "CONFIRMED"
+            | "DELIVERED"
+            | "CANCELLED",
+          deliveryAddress: order.deliveryAddress || undefined,
+          phoneNumber: order.phoneNumber || undefined,
+          notes: order.notes || undefined,
+          items: order.items.map((item) => ({
+            ...item,
+            flower: item.flower
+              ? {
+                  ...item.flower,
+                  attributes: JSON.parse(item.flower.attributesJson || "[]"),
+                }
+              : undefined,
+          })),
+        };
       } catch (error) {
         console.error("Error getting order:", error);
         throw new TRPCError({

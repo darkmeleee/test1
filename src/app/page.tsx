@@ -9,7 +9,6 @@ import Header from "~/components/Header";
 import CategoryFilter from "~/components/CategoryFilter";
 import FlowerGrid from "~/components/FlowerGrid";
 import CartButton from "~/components/CartButton";
-import TelegramDebug from "~/components/TelegramDebug";
 import { hapticImpact } from "~/utils/telegram";
 import type { Flower, Category, CartItem, User, FilterState } from "~/types";
 
@@ -142,7 +141,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header user={user} />
-      <TelegramDebug />
       
       <main className="container mx-auto px-4 py-6 pb-20">
         <CategoryFilter

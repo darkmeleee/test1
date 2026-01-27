@@ -72,7 +72,7 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
 
   useEffect(() => {
     if (orderData) {
-      setOrder(orderData as Order);
+      setOrder(orderData);
     }
   }, [orderData]);
 
