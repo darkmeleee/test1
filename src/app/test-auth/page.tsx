@@ -40,12 +40,12 @@ export default function TestAuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
       <Header user={user} />
       
       <main className="container mx-auto px-4 py-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+          <h1 className="text-2xl font-bold text-ink-900 dark:text-white mb-6">
             Тест аутентификации и базы данных
           </h1>
           
@@ -71,18 +71,18 @@ export default function TestAuthPage() {
               <button
                 onClick={checkDatabase}
                 disabled={loading}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                className="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-50"
               >
                 {loading ? "Загрузка..." : "Проверить базу данных"}
               </button>
             </div>
 
             {result && (
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
+              <div className="p-4 bg-brand-50 dark:bg-ink-700 rounded-lg">
+                <h2 className="font-semibold text-ink-900 dark:text-white mb-2">
                   Результат:
                 </h2>
-                <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-auto">
+                <pre className="text-sm text-ink-800 dark:text-ink-200 overflow-auto">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </div>

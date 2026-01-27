@@ -53,7 +53,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             className={`
               px-4 py-3 rounded-lg shadow-lg text-white max-w-sm animate-pulse
               ${toast.type === "error" ? "bg-red-600" : ""}
-              ${toast.type === "success" ? "bg-green-600" : ""}
+              ${toast.type === "success" ? "bg-brand-600" : ""}
               ${toast.type === "warning" ? "bg-yellow-600" : ""}
             `}
           >
@@ -61,7 +61,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <span className="text-sm font-medium">{toast.message}</span>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="ml-4 text-white hover:text-gray-200"
+                className="ml-4 text-white hover:text-ink-200"
               >
                 ×
               </button>

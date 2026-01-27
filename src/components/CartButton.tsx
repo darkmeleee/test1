@@ -10,7 +10,7 @@ export default function CartButton({ count, total, onClick }: CartButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-24 right-4 flex items-center space-x-2 rounded-full bg-green-600 px-4 py-3 text-white shadow-lg hover:bg-green-700 transition-colors z-40"
+      className="fixed bottom-24 right-4 flex items-center space-x-2 rounded-full bg-brand-600 px-4 py-3 text-white shadow-lg hover:bg-brand-700 transition-colors z-40"
     >
       <ShoppingCart className="h-5 w-5" />
       <div className="flex flex-col items-start">

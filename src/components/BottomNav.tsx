@@ -62,7 +62,7 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-brand-50 border-t border-brand-200 dark:bg-ink-900 dark:border-ink-700 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-around py-2">
           {navItems.map((item) => {
@@ -74,8 +74,8 @@ export default function BottomNav() {
                 onClick={(e) => handleNavigation(item.href, e)}
                 className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
                   active
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-gray-600 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400'
+                    ? 'text-brand-700 dark:text-brand-300'
+                    : 'text-ink-600 hover:text-brand-700 dark:text-ink-300 dark:hover:text-brand-300'
                 }`}
               >
                 {item.icon}

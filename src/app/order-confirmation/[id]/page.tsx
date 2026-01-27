@@ -22,11 +22,11 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
       case "CONFIRMED":
         return "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900";
       case "DELIVERED":
-        return "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900";
+        return "text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-ink-800";
       case "CANCELLED":
         return "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900";
       default:
-        return "text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900";
+        return "text-ink-600 dark:text-ink-300 bg-brand-100 dark:bg-ink-800";
     }
   };
 
@@ -47,11 +47,11 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={null} />
         <main className="container mx-auto px-4 py-6">
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="text-lg text-gray-600 dark:text-gray-400">
+            <div className="text-lg text-ink-600 dark:text-ink-300">
               Пожалуйста, войдите через Telegram для просмотра заказа
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
         <main className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center py-20">
@@ -77,16 +77,16 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
         <main className="container mx-auto px-4 py-6">
           <div className="text-center py-20">
-            <div className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+            <div className="text-lg text-ink-600 dark:text-ink-300 mb-4">
               Заказ не найден
             </div>
             <button
               onClick={() => router.push("/")}
-              className="rounded bg-green-600 px-6 py-2 text-white hover:bg-green-700 transition-colors"
+              className="rounded bg-brand-600 px-6 py-2 text-white hover:bg-brand-700 transition-colors"
             >
               На главную
             </button>
@@ -98,23 +98,23 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
       <Header user={user} />
       
       <main className="container mx-auto px-4 py-6">
         {/* Success Message */}
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-6">
+        <div className="bg-brand-100 dark:bg-ink-800 border border-brand-200 dark:border-ink-700 rounded-lg p-6 mb-6">
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <svg className="h-8 w-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-8 w-8 text-brand-700 dark:text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-green-900 dark:text-green-100">
+              <h1 className="text-xl font-bold text-ink-900 dark:text-white">
                 Заказ успешно оформлен!
               </h1>
-              <p className="text-green-700 dark:text-green-300">
+              <p className="text-ink-700 dark:text-ink-200">
                 Номер заказа: #{order.id.slice(-8)}
               </p>
             </div>
@@ -122,9 +122,9 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
         </div>
 
         {/* Order Details */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-ink-900 dark:text-white">
               Детали заказа
             </h2>
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
@@ -134,8 +134,8 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
 
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Дата заказа:</span>
-              <span className="text-gray-900 dark:text-white">
+              <span className="text-ink-600 dark:text-ink-300">Дата заказа:</span>
+              <span className="text-ink-900 dark:text-white">
                 {new Date(order.createdAt).toLocaleDateString('ru-RU', {
                   day: 'numeric',
                   month: 'long',
@@ -148,8 +148,8 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
             
             {order.deliveryAddress && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Адрес доставки:</span>
-                <span className="text-gray-900 dark:text-white text-right max-w-xs">
+                <span className="text-ink-600 dark:text-ink-300">Адрес доставки:</span>
+                <span className="text-ink-900 dark:text-white text-right max-w-xs">
                   {order.deliveryAddress}
                 </span>
               </div>
@@ -157,8 +157,8 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
             
             {order.phoneNumber && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Телефон:</span>
-                <span className="text-gray-900 dark:text-white">
+                <span className="text-ink-600 dark:text-ink-300">Телефон:</span>
+                <span className="text-ink-900 dark:text-white">
                   {order.phoneNumber}
                 </span>
               </div>
@@ -166,8 +166,8 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
             
             {order.notes && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Примечания:</span>
-                <span className="text-gray-900 dark:text-white text-right max-w-xs">
+                <span className="text-ink-600 dark:text-ink-300">Примечания:</span>
+                <span className="text-ink-900 dark:text-white text-right max-w-xs">
                   {order.notes}
                 </span>
               </div>
@@ -176,8 +176,8 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
         </div>
 
         {/* Order Items */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
             Состав заказа
           </h2>
           
@@ -193,25 +193,25 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
                     />
                   )}
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-white">
+                    <div className="font-medium text-ink-900 dark:text-white">
                       {item.flower?.name}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-ink-600 dark:text-ink-300">
                       {item.quantity} шт. × {item.price} ₽
                     </div>
                   </div>
                 </div>
-                <div className="font-medium text-gray-900 dark:text-white">
+                <div className="font-medium text-ink-900 dark:text-white">
                   {item.quantity * item.price} ₽
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
+          <div className="border-t border-brand-200 dark:border-ink-700 mt-4 pt-4">
             <div className="flex justify-between text-lg font-bold">
-              <span className="text-gray-900 dark:text-white">Итого:</span>
-              <span className="text-green-600 dark:text-green-400">
+              <span className="text-ink-900 dark:text-white">Итого:</span>
+              <span className="text-brand-700 dark:text-brand-300">
                 {order.totalAmount} ₽
               </span>
             </div>
@@ -222,14 +222,14 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
         <div className="space-y-3">
           <button
             onClick={() => router.push("/")}
-            className="w-full rounded bg-green-600 py-3 text-white font-medium hover:bg-green-700 transition-colors"
+            className="w-full rounded bg-brand-600 py-3 text-white font-medium hover:bg-brand-700 transition-colors"
           >
             Продолжить покупки
           </button>
           
           <button
             onClick={() => router.push("/profile")}
-            className="w-full rounded border border-gray-300 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="w-full rounded border border-brand-200 py-3 text-ink-700 font-medium hover:bg-brand-100 transition-colors dark:border-ink-700 dark:text-ink-200 dark:hover:bg-ink-800"
           >
             Мои заказы
           </button>

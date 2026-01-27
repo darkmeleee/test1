@@ -33,13 +33,13 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-brand-50 dark:bg-ink-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-ink-800">
           <div className="mb-6">
             <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           </div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Загрузка профиля</h2>
-          <p className="text-gray-600 dark:text-gray-400">Пожалуйста, подождите...</p>
+          <h2 className="mb-2 text-xl font-semibold text-ink-900 dark:text-white">Загрузка профиля</h2>
+          <p className="text-ink-600 dark:text-ink-300">Пожалуйста, подождите...</p>
         </div>
       </div>
     );
@@ -47,13 +47,13 @@ export default function ProfilePage() {
 
   if (!hasDbUser) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-brand-50 dark:bg-ink-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-ink-800">
           <div className="mb-6">
             <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           </div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Авторизация</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="mb-2 text-xl font-semibold text-ink-900 dark:text-white">Авторизация</h2>
+          <p className="text-ink-600 dark:text-ink-300">
             Пожалуйста, подождите...
           </p>
         </div>
@@ -63,13 +63,13 @@ export default function ProfilePage() {
 
   if (profileQuery.isLoading || !profileUser) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-brand-50 dark:bg-ink-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-ink-800">
           <div className="mb-6">
             <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           </div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Загрузка профиля</h2>
-          <p className="text-gray-600 dark:text-gray-400">Пожалуйста, подождите...</p>
+          <h2 className="mb-2 text-xl font-semibold text-ink-900 dark:text-white">Загрузка профиля</h2>
+          <p className="text-ink-600 dark:text-ink-300">Пожалуйста, подождите...</p>
         </div>
       </div>
     );
@@ -77,10 +77,10 @@ export default function ProfilePage() {
 
   if (profileQuery.isError) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
-          <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Ошибка загрузки профиля</h2>
-          <p className="text-gray-600 dark:text-gray-400">Попробуйте перезапустить приложение.</p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-brand-50 dark:bg-ink-900 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm dark:bg-ink-800">
+          <h2 className="mb-2 text-xl font-semibold text-ink-900 dark:text-white">Ошибка загрузки профиля</h2>
+          <p className="text-ink-600 dark:text-ink-300">Попробуйте перезапустить приложение.</p>
         </div>
       </div>
     );
@@ -91,12 +91,12 @@ export default function ProfilePage() {
   const orderHistory = orders.filter(order => order.status === 'DELIVERED' || order.status === 'CANCELLED');
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
       <Header user={profileUser} />
       
       <main className="container mx-auto px-4 py-6">
         {/* Profile Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center space-x-4">
             {profileUser.photoUrl && (
               <img
@@ -106,11 +106,11 @@ export default function ProfilePage() {
               />
             )}
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-ink-900 dark:text-white">
                 {profileUser.firstName}
               </h1>
               {profileUser.username && (
-                <p className="text-gray-600 dark:text-gray-400">@{profileUser.username}</p>
+                <p className="text-ink-600 dark:text-ink-300">@{profileUser.username}</p>
               )}
               <div className="flex items-center space-x-2 mt-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
@@ -122,25 +122,25 @@ export default function ProfilePage() {
         </div>
 
         {/* Active Orders */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-xl font-semibold text-ink-900 dark:text-white mb-4">
             Активный заказ
           </h2>
           
           {activeOrders.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-ink-600 dark:text-ink-300">
               У вас нет активных заказов
             </p>
           ) : (
             <div className="space-y-4">
               {activeOrders.map((order) => (
-                <div key={order.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div key={order.id} className="border border-brand-200 dark:border-ink-700 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">
+                      <h3 className="font-medium text-ink-900 dark:text-white">
                         Заказ #{order.id.slice(-8)}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-ink-600 dark:text-ink-300">
                         {new Date(order.createdAt).toLocaleDateString('ru-RU', {
                           day: 'numeric',
                           month: 'long',
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-lg text-green-600 dark:text-green-400">
+                      <div className="font-bold text-lg text-brand-700 dark:text-brand-300">
                         {order.totalAmount} ₽
                       </div>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -163,7 +163,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-ink-600 dark:text-ink-300">
                     {order.items?.length} {order.items?.length === 1 ? 'товар' : order.items?.length === 2 || order.items?.length === 3 || order.items?.length === 4 ? 'товара' : 'товаров'}
                   </div>
                   
@@ -180,25 +180,25 @@ export default function ProfilePage() {
         </div>
 
         {/* Order History */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold text-ink-900 dark:text-white mb-4">
             История заказов
           </h2>
           
           {orderHistory.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-ink-600 dark:text-ink-300">
               У вас пока нет завершенных заказов
             </p>
           ) : (
             <div className="space-y-4">
               {orderHistory.map((order) => (
-                <div key={order.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div key={order.id} className="border border-brand-200 dark:border-ink-700 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">
+                      <h3 className="font-medium text-ink-900 dark:text-white">
                         Заказ #{order.id.slice(-8)}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-ink-600 dark:text-ink-300">
                         {new Date(order.createdAt).toLocaleDateString('ru-RU', {
                           day: 'numeric',
                           month: 'long',
@@ -209,11 +209,11 @@ export default function ProfilePage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-lg text-green-600 dark:text-green-400">
+                      <div className="font-bold text-lg text-brand-700 dark:text-brand-300">
                         {order.totalAmount} ₽
                       </div>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        order.status === 'DELIVERED' ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900' :
+                        order.status === 'DELIVERED' ? 'text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-ink-800' :
                         'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900'
                       }`}>
                         {order.status === 'DELIVERED' ? 'Доставлен' : 'Отменен'}
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-ink-600 dark:text-ink-300">
                     {order.items?.length} {order.items?.length === 1 ? 'товар' : order.items?.length === 2 || order.items?.length === 3 || order.items?.length === 4 ? 'товара' : 'товаров'}
                   </div>
                   

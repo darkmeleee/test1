@@ -57,11 +57,11 @@ export default function CheckoutPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={null} />
         <main className="container mx-auto px-4 py-6">
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="text-lg text-gray-600 dark:text-gray-400">
+            <div className="text-lg text-ink-600 dark:text-ink-300">
               Пожалуйста, войдите через Telegram для оформления заказа
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
         <main className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center py-20">
@@ -87,16 +87,16 @@ export default function CheckoutPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
         <main className="container mx-auto px-4 py-6">
           <div className="text-center py-20">
-            <div className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+            <div className="text-lg text-ink-600 dark:text-ink-300 mb-4">
               Ваша корзина пуста
             </div>
             <button
               onClick={() => router.push("/")}
-              className="rounded bg-green-600 px-6 py-2 text-white hover:bg-green-700 transition-colors"
+              className="rounded bg-brand-600 px-6 py-2 text-white hover:bg-brand-700 transition-colors"
             >
               Перейти к покупкам
             </button>
@@ -108,49 +108,49 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
       <Header user={user} />
       
       <main className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold mb-6 text-ink-900 dark:text-white">
           Оформление заказа
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Order Summary */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
               Состав заказа
             </h2>
             <div className="space-y-3">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-ink-600 dark:text-ink-300">
                     {item.flower?.name} × {item.quantity}
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-white">
+                  <span className="font-medium text-ink-900 dark:text-white">
                     {(item.flower?.price || 0) * item.quantity} ₽
                   </span>
                 </div>
               ))}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
+              <div className="border-t border-brand-200 dark:border-ink-700 pt-3 mt-3">
                 <div className="flex justify-between text-lg font-bold">
-                  <span className="text-gray-900 dark:text-white">Итого:</span>
-                  <span className="text-green-600 dark:text-green-400">{cartTotal} ₽</span>
+                  <span className="text-ink-900 dark:text-white">Итого:</span>
+                  <span className="text-brand-700 dark:text-brand-300">{cartTotal} ₽</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Delivery Information */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
               Информация о доставке
             </h2>
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="address" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
                   Адрес доставки
                 </label>
                 <textarea
@@ -158,13 +158,13 @@ export default function CheckoutPage() {
                   value={deliveryAddress}
                   onChange={(e) => setDeliveryAddress(e.target.value)}
                   rows={3}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                  className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-900 placeholder-ink-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-ink-700 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400"
                   placeholder="Укажите адрес доставки..."
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
                   Телефон для связи
                 </label>
                 <input
@@ -172,13 +172,13 @@ export default function CheckoutPage() {
                   id="phone"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                  className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-900 placeholder-ink-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-ink-700 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400"
                   placeholder="+7 (999) 123-45-67"
                 />
               </div>
 
               <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="notes" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
                   Примечания к заказу
                 </label>
                 <textarea
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                  className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-900 placeholder-ink-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-ink-700 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400"
                   placeholder="Особые пожелания..."
                 />
               </div>
@@ -197,7 +197,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded bg-green-600 py-3 text-white font-medium hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full rounded bg-brand-600 py-3 text-white font-medium hover:bg-brand-700 transition-colors disabled:bg-ink-300 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Оформление..." : "Подтвердить заказ"}
           </button>

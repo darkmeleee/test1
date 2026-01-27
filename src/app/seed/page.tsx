@@ -32,20 +32,20 @@ export default function SeedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+    <div className="min-h-screen bg-brand-50 dark:bg-ink-900 flex items-center justify-center">
+      <div className="bg-white dark:bg-ink-800 rounded-lg shadow-lg p-8 max-w-md w-full">
+        <h1 className="text-2xl font-bold text-ink-900 dark:text-white mb-4">
           Инициализация данных
         </h1>
         
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-ink-600 dark:text-ink-300 mb-6">
           Нажмите кнопку ниже для загрузки начальных данных о цветах и категориях в базу данных.
         </p>
 
         <button
           onClick={handleSeedData}
           disabled={isSeeding}
-          className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="w-full bg-brand-600 text-white py-3 px-4 rounded-lg hover:bg-brand-700 disabled:bg-ink-300 disabled:cursor-not-allowed transition-colors"
         >
           {isSeeding ? "Загрузка..." : "Загрузить данные"}
         </button>
@@ -54,14 +54,14 @@ export default function SeedPage() {
           <div className={`mt-4 p-3 rounded-lg text-sm ${
             message.includes("Ошибка") 
               ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" 
-              : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+              : "bg-brand-100 text-ink-800 dark:bg-ink-700 dark:text-ink-200"
           }`}>
             {message}
           </div>
         )}
 
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-6 pt-6 border-t border-brand-200 dark:border-ink-700">
+          <p className="text-xs text-ink-500 dark:text-ink-400">
             После загрузки данных перейдите на главную страницу для просмотра каталога.
           </p>
         </div>

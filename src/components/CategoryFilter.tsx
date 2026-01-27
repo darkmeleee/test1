@@ -34,7 +34,7 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
     <div className="space-y-4">
       {/* Main Categories */}
       <div>
-        <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">
           Категории
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -44,8 +44,8 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
               onClick={() => handleCategoryChange(category.id)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 filter.selectedCategory === category.id
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  ? "bg-brand-600 text-white"
+                  : "bg-brand-100 text-ink-700 hover:bg-brand-200 dark:bg-ink-700 dark:text-ink-200 dark:hover:bg-ink-600"
               }`}
             >
               {category.name}
@@ -64,7 +64,7 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 filter.selectedAttributes.includes(category.name)
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  : "bg-brand-100 text-ink-700 hover:bg-brand-200 dark:bg-ink-700 dark:text-ink-200 dark:hover:bg-ink-600"
               }`}
             >
               {category.name}

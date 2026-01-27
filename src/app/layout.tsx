@@ -8,6 +8,7 @@ import { CartProvider } from "~/contexts/CartContext";
 import { OrderProvider } from "~/contexts/OrderContext";
 import { ToastProvider } from "~/components/Toast";
 import TelegramLoader from "~/components/TelegramLoader";
+import ForceLightTheme from "~/components/ForceLightTheme";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -31,6 +32,7 @@ export default function RootLayout({
             <OrderProvider>
               <ToastProvider>
                 <TelegramLoader />
+                <ForceLightTheme />
                 {children}
               </ToastProvider>
             </OrderProvider>

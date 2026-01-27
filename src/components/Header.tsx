@@ -1,4 +1,5 @@
 import { MapPin, User } from "lucide-react";
+import Image from "next/image";
 import type { User as UserType } from "~/types";
 
 interface HeaderProps {
@@ -7,13 +8,13 @@ interface HeaderProps {
 
 export default function Header({ user }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-sm">
+    <header className="sticky top-0 z-50 bg-brand-50 dark:bg-ink-900 shadow-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo and Location */}
           <div className="flex items-center space-x-4">
-            <div className="text-xl font-bold text-green-600 dark:text-green-400">
-              🌸 Расцвет
+            <div className="flex items-center">
+              <Image src="/l.svg" alt="Расцвет" width={120} height={32} priority />
             </div>
           </div>
 
@@ -29,18 +30,18 @@ export default function Header({ user }: HeaderProps) {
                   />
                 )}
                 <div className="text-sm">
-                  <div className="font-medium text-gray-900 dark:text-white">
+                  <div className="font-medium text-ink-900 dark:text-white">
                     {user.firstName}
                   </div>
                   {user.username && (
-                    <div className="text-gray-500 dark:text-gray-400">
+                    <div className="text-ink-600 dark:text-ink-300">
                       @{user.username}
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-2 text-ink-600 dark:text-ink-300">
                 <User className="h-5 w-5" />
                 <span className="text-sm">Гость</span>
               </div>

@@ -12,11 +12,13 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: #2f2f2f;
+  background-color: #fbf8f4;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='260' viewBox='0 0 1200 260'%3E%3Cg fill='none' stroke='%23d9c9b4' stroke-width='18' stroke-linecap='round' stroke-linejoin='round' opacity='0.55'%3E%3Cpath d='M40 140c120-90 260-120 420-60 170 62 320 60 500-40 70-40 140-52 200-30'/%3E%3Cpath d='M160 78c30 40 60 58 100 68'/%3E%3Cpath d='M260 70c32 54 74 80 126 94'/%3E%3Cpath d='M400 66c30 58 90 90 160 106'/%3E%3Cpath d='M610 60c34 58 86 86 150 100'/%3E%3Cpath d='M820 66c30 44 70 70 120 84'/%3E%3Cpath d='M980 78c22 32 48 50 78 62'/%3E%3C/g%3E%3Cg fill='%23d9c9b4' opacity='0.55'%3E%3Cellipse cx='210' cy='86' rx='18' ry='10'/%3E%3Cellipse cx='310' cy='84' rx='16' ry='9'/%3E%3Cellipse cx='458' cy='84' rx='18' ry='10'/%3E%3Cellipse cx='675' cy='78' rx='18' ry='10'/%3E%3Cellipse cx='880' cy='84' rx='16' ry='9'/%3E%3Cellipse cx='1040' cy='92' rx='14' ry='8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Cg fill='none' stroke='%23e8ddd0' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' opacity='0.65'%3E%3Cpath d='M40 420c90-120 170-190 250-220 86-32 150-22 190 6'/%3E%3Cpath d='M82 392c18-42 50-78 96-112'/%3E%3Cpath d='M122 350c20-40 56-74 108-106'/%3E%3Cpath d='M168 314c22-36 56-66 104-90'/%3E%3C/g%3E%3Cg fill='%23e8ddd0' opacity='0.65'%3E%3Cellipse cx='150' cy='330' rx='14' ry='8'/%3E%3Cellipse cx='190' cy='300' rx='14' ry='8'/%3E%3Cellipse cx='230' cy='272' rx='14' ry='8'/%3E%3Cellipse cx='274' cy='248' rx='14' ry='8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Cg fill='none' stroke='%23e8ddd0' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' opacity='0.65'%3E%3Cpath d='M480 420c-90-120-170-190-250-220-86-32-150-22-190 6'/%3E%3Cpath d='M438 392c-18-42-50-78-96-112'/%3E%3Cpath d='M398 350c-20-40-56-74-108-106'/%3E%3Cpath d='M352 314c-22-36-56-66-104-90'/%3E%3C/g%3E%3Cg fill='%23e8ddd0' opacity='0.65'%3E%3Cellipse cx='370' cy='330' rx='14' ry='8'/%3E%3Cellipse cx='330' cy='300' rx='14' ry='8'/%3E%3Cellipse cx='290' cy='272' rx='14' ry='8'/%3E%3Cellipse cx='246' cy='248' rx='14' ry='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: top center, bottom left, bottom right;
+  background-size: min(1200px, 140vw) auto, 360px 360px, 360px 360px;
 }

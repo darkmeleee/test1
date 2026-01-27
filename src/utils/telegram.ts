@@ -94,32 +94,7 @@ const initTelegramWebApp = () => {
 
   // Set theme colors
   const root = document.documentElement;
-  if (telegram.colorScheme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
-
-  // Apply theme params
-  const theme = telegram.themeParams;
-  if (theme.bg_color) {
-    root.style.setProperty("--tg-bg-color", theme.bg_color);
-  }
-  if (theme.text_color) {
-    root.style.setProperty("--tg-text-color", theme.text_color);
-  }
-  if (theme.hint_color) {
-    root.style.setProperty("--tg-hint-color", theme.hint_color);
-  }
-  if (theme.link_color) {
-    root.style.setProperty("--tg-link-color", theme.link_color);
-  }
-  if (theme.button_color) {
-    root.style.setProperty("--tg-button-color", theme.button_color);
-  }
-  if (theme.button_text_color) {
-    root.style.setProperty("--tg-button-text-color", theme.button_text_color);
-  }
+  root.classList.remove("dark");
 };
 
 export const hapticImpact = (style: "light" | "medium" | "heavy" = "light") => {
