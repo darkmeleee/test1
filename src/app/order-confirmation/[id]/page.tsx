@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useOrder } from "~/contexts/OrderContext";
 import { useTelegramAuth } from "~/hooks/useTelegramAuth";
-import type { Order } from "~/types";
+import { api } from "~/trpc/react";
 
 import Header from "~/components/Header";
 import BottomNav from "~/components/BottomNav";
@@ -12,8 +11,11 @@ import BottomNav from "~/components/BottomNav";
 export default function OrderConfirmationPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { user } = useTelegramAuth();
-  const { getOrder, isLoading } = useOrder();
-  const order = getOrder(params.id);
+  const orderQuery = api.orders.getOrder.useQuery(
+    { id: params.id },
+    { enabled: !!user },
+  );
+  const order = orderQuery.data;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -61,13 +63,35 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
     );
   }
 
-  if (isLoading) {
+  if (orderQuery.isLoading) {
     return (
       <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
         <main className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center py-20">
             <div className="text-lg">Загрузка...</div>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (orderQuery.isError) {
+    return (
+      <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
+        <Header user={user} />
+        <main className="container mx-auto px-4 py-6">
+          <div className="text-center py-20">
+            <div className="text-lg text-ink-600 dark:text-ink-300 mb-4">
+              Ошибка загрузки заказа
+            </div>
+            <button
+              onClick={() => router.push("/profile")}
+              className="rounded bg-brand-600 px-6 py-2 text-white hover:bg-brand-700 transition-colors"
+            >
+              Мои заказы
+            </button>
           </div>
         </main>
         <BottomNav />

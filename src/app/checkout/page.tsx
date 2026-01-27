@@ -20,8 +20,27 @@ export default function CheckoutPage() {
   // Form state
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validatePhoneNumber = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length === 0) {
+      return "Введите номер телефона";
+    }
+
+    if (digits.length !== 11) {
+      return "Номер телефона должен содержать 11 цифр";
+    }
+
+    if (digits[0] !== "7" && digits[0] !== "8") {
+      return "Номер должен начинаться с 7 или 8";
+    }
+
+    return null;
+  };
 
   // Calculate totals
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
@@ -31,6 +50,10 @@ export default function CheckoutPage() {
     e.preventDefault();
     
     if (!user) return;
+
+    const phoneValidationError = validatePhoneNumber(phoneNumber);
+    setPhoneError(phoneValidationError);
+    if (phoneValidationError) return;
     
     setIsSubmitting(true);
     hapticImpact('medium');
@@ -171,10 +194,25 @@ export default function CheckoutPage() {
                   type="tel"
                   id="phone"
                   value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-900 placeholder-ink-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-ink-700 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400"
+                  onChange={(e) => {
+                    setPhoneNumber(e.target.value);
+                    if (phoneError) {
+                      setPhoneError(null);
+                    }
+                  }}
+                  onBlur={() => setPhoneError(validatePhoneNumber(phoneNumber))}
+                  className={`w-full rounded-md border px-3 py-2 text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-1 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400 ${
+                    phoneError
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600"
+                      : "border-brand-200 focus:border-brand-500 focus:ring-brand-500 dark:border-ink-700"
+                  }`}
                   placeholder="+7 (999) 123-45-67"
                 />
+                {phoneError && (
+                  <div className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {phoneError}
+                  </div>
+                )}
               </div>
 
               <div>

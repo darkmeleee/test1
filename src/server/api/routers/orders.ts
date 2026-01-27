@@ -8,7 +8,19 @@ export const ordersRouter = createTRPCRouter({
     .input(
       z.object({
         deliveryAddress: z.string().optional(),
-        phoneNumber: z.string().optional(),
+        phoneNumber: z
+          .string()
+          .optional()
+          .refine(
+            (value) => {
+              if (!value) return true;
+              const digits = value.replace(/\D/g, "");
+              return (
+                digits.length === 11 && (digits[0] === "7" || digits[0] === "8")
+              );
+            },
+            { message: "Invalid phone number" },
+          ),
         notes: z.string().optional(),
         items: z
           .array(
