@@ -114,6 +114,23 @@ export function useTelegramAuth() {
           return;
         }
 
+        // Debug: Check what's available
+        alert(
+          `Debug - Telegram WebApp available: ${!!window.Telegram?.WebApp}`,
+        );
+        alert(
+          `Debug - initData available: ${!!window.Telegram?.WebApp?.initData}`,
+        );
+        alert(
+          `Debug - initDataUnsafe available: ${!!window.Telegram?.WebApp?.initDataUnsafe}`,
+        );
+
+        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+          alert(
+            `Debug - User found in initDataUnsafe: ${JSON.stringify(window.Telegram.WebApp.initDataUnsafe.user)}`,
+          );
+        }
+
         // Fallback to API authentication if WebApp data is not available
         authenticateWithTelegram()
           .then((userData) => {
