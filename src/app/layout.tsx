@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { CartProvider } from "~/contexts/CartContext";
+import { OrderProvider } from "~/contexts/OrderContext";
 import TelegramLoader from "~/components/TelegramLoader";
 
 export const metadata: Metadata = {
@@ -26,8 +27,10 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <CartProvider>
-            <TelegramLoader />
-            {children}
+            <OrderProvider>
+              <TelegramLoader />
+              {children}
+            </OrderProvider>
           </CartProvider>
         </TRPCReactProvider>
       </body>

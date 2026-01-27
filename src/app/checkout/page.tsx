@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 import { hapticImpact } from "~/utils/telegram";
+import { useCart } from "~/contexts/CartContext";
+import { useOrder } from "~/contexts/OrderContext";
 import type { CartItem, Order } from "~/types";
 
 import Header from "~/components/Header";
@@ -12,8 +13,9 @@ import BottomNav from "~/components/BottomNav";
 export default function CheckoutPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { items: cartItems, isLoading } = useCart();
+  const { createOrder } = useOrder();
   
   // Form state
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -71,39 +73,6 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  // Get cart items
-  const { data: cartData, isLoading } = api.flowers.getCart.useQuery(
-    { userId: user?.id || "" },
-    { enabled: !!user }
-  );
-
-  // Create order mutation
-  const createOrderMutation = api.orders.createOrder.useMutation({
-    onSuccess: (order: any) => {
-      hapticImpact('heavy');
-      router.push(`/order-confirmation/${order.id}`);
-    },
-    onError: (error) => {
-      hapticImpact('medium');
-      console.error("Failed to create order:", error);
-      alert("Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.");
-    },
-  });
-
-  // Update cart items when data changes
-  useEffect(() => {
-    if (cartData) {
-      const transformedCartData = cartData.map(item => ({
-        ...item,
-        flower: item.flower ? {
-          ...item.flower,
-          attributes: JSON.parse(item.flower.attributesJson || "[]") as string[],
-        } : undefined,
-      }));
-      setCartItems(transformedCartData);
-    }
-  }, [cartData]);
-
   // Calculate totals
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -117,13 +86,22 @@ export default function CheckoutPage() {
     hapticImpact('medium');
     
     try {
-      await createOrderMutation.mutateAsync({
+      const order = await createOrder({
         deliveryAddress,
         phoneNumber,
         notes,
       });
-    } catch (error) {
+      
+      if (order) {
+        hapticImpact('heavy');
+        router.push(`/order-confirmation/${order.id}`);
+      } else {
+        throw new Error("Failed to create order");
+      }
+    } catch (error: any) {
       console.error("Order submission error:", error);
+      hapticImpact('medium');
+      alert("Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.");
     } finally {
       setIsSubmitting(false);
     }

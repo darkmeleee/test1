@@ -4,14 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { initTelegram } from "~/utils/telegram";
 import { authenticateWithTelegram } from "~/utils/auth";
-import type { User, CartItem } from "~/types";
+import { useOrder } from "~/contexts/OrderContext";
+import type { User, Order } from "~/types";
 import Header from "~/components/Header";
 import BottomNav from "~/components/BottomNav";
 
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { orders, isLoading } = useOrder();
 
   // Function to get user data directly from Telegram WebApp
   const getUserFromWebApp = () => {
@@ -176,8 +177,8 @@ export default function ProfilePage() {
     );
   }
 
-  const totalSpent = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
-  const totalOrders = cartItems.length;
+  const totalSpent = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalOrders = orders.length;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
@@ -221,88 +222,78 @@ export default function ProfilePage() {
           
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-              {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+              {orders.reduce((sum: number, order: Order) => sum + (order.items?.reduce((itemSum: number, item: any) => itemSum + item.quantity, 0) || 0), 0)}
             </div>
-            <div className="text-gray-600 dark:text-gray-400">Товаров в корзине</div>
+            <div className="text-gray-600 dark:text-gray-400">Всего товаров заказано</div>
           </div>
           
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
               {totalSpent} ₽
             </div>
-            <div className="text-gray-600 dark:text-gray-400">Сумма корзины</div>
+            <div className="text-gray-600 dark:text-gray-400">Всего потрачено</div>
           </div>
         </div>
 
         {/* Recent Orders */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Текущая корзина
+            Мои заказы
           </h2>
           
-          {/* Test navigation buttons */}
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={() => {
-                console.log('Test navigation to home');
-                router.push('/');
-              }}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              На главную
-            </button>
-            <button
-              onClick={() => {
-                console.log('Test navigation to cart');
-                router.push('/cart');
-              }}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              В корзину
-            </button>
-          </div>
-          
-          {cartItems.length === 0 ? (
+          {orders.length === 0 ? (
             <p className="text-gray-600 dark:text-gray-400">
-              Ваша корзина пуста
+              У вас пока нет заказов
             </p>
           ) : (
             <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <div className="flex items-center space-x-4">
-                    {item.flower?.image && (
-                      <img
-                        src={item.flower.image}
-                        alt={item.flower.name}
-                        className="h-12 w-12 rounded object-cover"
-                      />
-                    )}
+              {orders.map((order) => (
+                <div key={order.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="font-medium text-gray-900 dark:text-white">
-                        {item.flower?.name}
+                        Заказ #{order.id.slice(-8)}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {item.quantity} шт. × {item.flower?.price} ₽
+                        {new Date(order.createdAt).toLocaleDateString('ru-RU', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-gray-900 dark:text-white">
-                      {(item.flower?.price || 0) * item.quantity} ₽
+                    <div className="text-right">
+                      <div className="font-bold text-lg text-green-600 dark:text-green-400">
+                        {order.totalAmount} ₽
+                      </div>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        order.status === 'PENDING' ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900' :
+                        order.status === 'CONFIRMED' ? 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900' :
+                        order.status === 'DELIVERED' ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900' :
+                        'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900'
+                      }`}>
+                        {order.status === 'PENDING' ? 'В обработке' :
+                         order.status === 'CONFIRMED' ? 'Подтвержден' :
+                         order.status === 'DELIVERED' ? 'Доставлен' :
+                         'Отменен'}
+                      </span>
                     </div>
                   </div>
+                  
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {order.items?.length} {order.items?.length === 1 ? 'товар' : order.items?.length === 2 || order.items?.length === 3 || order.items?.length === 4 ? 'товара' : 'товаров'}
+                  </div>
+                  
+                  <button
+                    onClick={() => router.push(`/order-confirmation/${order.id}`)}
+                    className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Посмотреть детали
+                  </button>
                 </div>
               ))}
-              
-              <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Итого:
-                </span>
-                <span className="text-lg font-bold text-green-600 dark:text-green-400">
-                  {totalSpent} ₽
-                </span>
-              </div>
             </div>
           )}
         </div>

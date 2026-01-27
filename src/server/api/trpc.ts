@@ -51,11 +51,17 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     const authHeader = opts.headers.get("authorization");
     const telegramData = opts.headers.get("x-telegram-data");
 
+    console.log("TRPC Context - Telegram data header:", telegramData);
+
     if (telegramData) {
       const params = new URLSearchParams(telegramData);
       const userParam = params.get("user");
+      console.log("TRPC Context - User param:", userParam);
+
       if (userParam) {
         const userData = JSON.parse(decodeURIComponent(userParam));
+        console.log("TRPC Context - Parsed user data:", userData);
+
         user = {
           id: userData.id.toString(),
           telegramId: userData.id.toString(),
@@ -64,7 +70,11 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
           username: userData.username,
           photoUrl: userData.photo_url,
         };
+
+        console.log("TRPC Context - Final user object:", user);
       }
+    } else {
+      console.log("TRPC Context - No telegram data found");
     }
   } catch (error) {
     console.error("Error parsing Telegram user data in context:", error);

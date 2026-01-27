@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
+import { useOrder } from "~/contexts/OrderContext";
 import type { Order } from "~/types";
 
 import Header from "~/components/Header";
@@ -11,7 +11,8 @@ import BottomNav from "~/components/BottomNav";
 export default function OrderConfirmationPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [order, setOrder] = useState<Order | null>(null);
+  const { getOrder, isLoading } = useOrder();
+  const order = getOrder(params.id);
 
   // Initialize user with Telegram WebApp data
   useEffect(() => {
@@ -63,18 +64,6 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
       });
     }
   }, []);
-
-  // Get order details
-  const { data: orderData, isLoading } = api.orders.getOrder.useQuery(
-    { id: params.id },
-    { enabled: !!user }
-  );
-
-  useEffect(() => {
-    if (orderData) {
-      setOrder(orderData);
-    }
-  }, [orderData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

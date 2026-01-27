@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { api } from "~/trpc/react";
 import type { CartItem, Flower } from "~/types";
 
 interface CartContextType {
@@ -18,110 +17,45 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "seva-flowers-cart";
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load cart from API
-  const { data: cartData, refetch: refetchCart } = api.cart.getUserCart.useQuery(undefined, {
-    enabled: false, // We'll trigger this manually
-    onSuccess: (data) => {
-      console.log('Cart data refetched:', data);
-      if (data) {
-        setItems(data.items || []);
-      }
-    }
-  });
-
-  // Add to cart mutation
-  const addToCartMutation = api.cart.addToCart.useMutation({
-    onSuccess: (data) => {
-      console.log('Add to cart success:', data);
-      // Update local state immediately
-      if (data) {
-        setItems(prevItems => {
-          const existingItemIndex = prevItems.findIndex(item => item.flowerId === data.flowerId);
-          if (existingItemIndex >= 0) {
-            // Update existing item
-            const newItems = [...prevItems];
-            newItems[existingItemIndex] = data;
-            return newItems;
-          } else {
-            // Add new item
-            return [...prevItems, data];
-          }
-        });
-      }
-      // Then refetch to ensure consistency
-      refetchCart();
-    },
-    onError: (error) => {
-      console.error('Add to cart mutation error:', error);
-    }
-  });
-
-  // Remove from cart mutation
-  const removeFromCartMutation = api.cart.removeFromCart.useMutation({
-    onSuccess: (data) => {
-      console.log('Remove from cart success:', data);
-      // For deleteMany, we need to refetch since we don't know which items were deleted
-      refetchCart();
-    },
-    onError: (error) => {
-      console.error('Remove from cart mutation error:', error);
-    }
-  });
-
-  // Update quantity mutation
-  const updateQuantityMutation = api.cart.updateQuantity.useMutation({
-    onSuccess: (data) => {
-      console.log('Update quantity success:', data);
-      // For updateMany, we need to refetch since we don't get the updated items
-      refetchCart();
-    },
-    onError: (error) => {
-      console.error('Update quantity mutation error:', error);
-    }
-  });
-
-  // Clear cart mutation
-  const clearCartMutation = api.cart.clearCart.useMutation({
-    onSuccess: () => {
-      console.log('Clear cart success');
-      // Update local state immediately
-      setItems([]);
-      // Then refetch to ensure consistency
-      refetchCart();
-    },
-    onError: (error) => {
-      console.error('Clear cart mutation error:', error);
-    }
-  });
-
-  // Initialize cart
+  // Load cart from localStorage
   useEffect(() => {
-    const initCart = async () => {
-      console.log('Initializing cart...');
+    const loadCart = () => {
       try {
-        const { data } = await refetchCart();
-        console.log('Cart refetch result:', data);
-        if (data) {
-          console.log('Setting cart items:', data.items);
-          setItems(data.items || []);
+        if (typeof window !== "undefined") {
+          const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+          if (storedCart) {
+            const parsedCart = JSON.parse(storedCart);
+            setItems(parsedCart);
+          }
         }
       } catch (error) {
-        console.error('Error loading cart:', error);
+        console.error("Error loading cart from localStorage:", error);
       } finally {
         setIsLoading(false);
-        setIsInitialized(true);
       }
     };
 
-    if (!isInitialized) {
-      initCart();
+    loadCart();
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (!isLoading) {
+      try {
+        if (typeof window !== "undefined") {
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+        }
+      } catch (error) {
+        console.error("Error saving cart to localStorage:", error);
+      }
     }
-  }, [isInitialized, refetchCart]);
+  }, [items, isLoading]);
 
   // Calculate totals
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -131,54 +65,62 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   // Add item to cart
-  const addToCart = async (flower: Flower, quantity: number = 1) => {
-    try {
-      await addToCartMutation.mutateAsync({
-        flowerId: flower.id,
-        quantity,
-      });
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      throw error;
-    }
+  const addToCart = (flower: Flower, quantity: number = 1) => {
+    setItems(prevItems => {
+      const existingItemIndex = prevItems.findIndex(item => item.flowerId === flower.id);
+      
+      if (existingItemIndex >= 0) {
+        // Update existing item
+        const newItems = [...prevItems];
+        const existingItem = newItems[existingItemIndex];
+        if (existingItem) {
+          newItems[existingItemIndex] = {
+            id: existingItem.id,
+            userId: existingItem.userId,
+            flowerId: existingItem.flowerId,
+            quantity: existingItem.quantity + quantity,
+            flower: existingItem.flower,
+          };
+        }
+        return newItems;
+      } else {
+        // Add new item
+        const newItem: CartItem = {
+          id: `${Date.now()}-${Math.random()}`,
+          userId: "local",
+          flowerId: flower.id,
+          quantity,
+          flower,
+        };
+        return [...prevItems, newItem];
+      }
+    });
   };
 
   // Remove item from cart
-  const removeFromCart = async (flowerId: string) => {
-    try {
-      await removeFromCartMutation.mutateAsync({ flowerId });
-    } catch (error) {
-      console.error('Error removing from cart:', error);
-      throw error;
-    }
+  const removeFromCart = (flowerId: string) => {
+    setItems(prevItems => prevItems.filter(item => item.flowerId !== flowerId));
   };
 
   // Update item quantity
-  const updateQuantity = async (flowerId: string, quantity: number) => {
+  const updateQuantity = (flowerId: string, quantity: number) => {
     if (quantity < 1) {
-      await removeFromCart(flowerId);
+      removeFromCart(flowerId);
       return;
     }
 
-    try {
-      await updateQuantityMutation.mutateAsync({
-        flowerId,
-        quantity,
-      });
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      throw error;
-    }
+    setItems(prevItems => 
+      prevItems.map(item =>
+        item.flowerId === flowerId
+          ? { ...item, quantity }
+          : item
+      )
+    );
   };
 
   // Clear cart
-  const clearCart = async () => {
-    try {
-      await clearCartMutation.mutateAsync();
-    } catch (error) {
-      console.error('Error clearing cart:', error);
-      throw error;
-    }
+  const clearCart = () => {
+    setItems([]);
   };
 
   return (

@@ -2,6 +2,7 @@
   "name": "seva-flowers",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -30,6 +31,7 @@
     "@types/react-dom": "^18.0.0",
     "autoprefixer": "^10.0.0",
     "eslint": "^8.0.0",
+    "eslint-config-next": "^14.2.35",
     "postcss": "^8.0.0",
     "prisma": "^5.0.0",
     "tailwindcss": "^3.0.0",

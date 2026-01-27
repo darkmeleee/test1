@@ -10,7 +10,8 @@ import CategoryFilter from "~/components/CategoryFilter";
 import FlowerGrid from "~/components/FlowerGrid";
 import CartButton from "~/components/CartButton";
 import { hapticImpact } from "~/utils/telegram";
-import type { Flower, Category, CartItem, User, FilterState } from "~/types";
+import { useCart } from "~/contexts/CartContext";
+import type { Flower, Category, User, FilterState } from "~/types";
 
 // Components will be created separately
 import BottomNav from "~/components/BottomNav.tsx";
@@ -18,11 +19,13 @@ import BottomNav from "~/components/BottomNav.tsx";
 export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [filter, setFilter] = useState<FilterState>({
     selectedCategory: "all", // Will be updated to actual "Все" category ID when categories load
     selectedAttributes: [],
   });
+
+  // Use CartContext for cart functionality
+  const { addToCart, items: cartItems, totalItems: cartCount, totalPrice: cartTotal } = useCart();
 
   // Initialize Telegram and authenticate
   useEffect(() => {
@@ -86,50 +89,6 @@ export default function HomePage() {
     }) || [];
   }, [allFlowers, filter.selectedCategory, filter.selectedAttributes, categories]);
 
-  // Calculate cart total
-  const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  const addToCart = (flower: Flower) => {
-    if (!user) return;
-    
-    hapticImpact('light');
-    // This would call the API to add to cart
-    const existingItem = cartItems.find(item => item.flowerId === flower.id);
-    
-    if (existingItem) {
-      setCartItems(prev => 
-        prev.map(item => 
-          item.flowerId === flower.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCartItems(prev => [...prev, {
-        id: Date.now().toString(),
-        userId: user.id,
-        flowerId: flower.id,
-        quantity: 1,
-        flower,
-      }]);
-    }
-  };
-
-  const updateQuantity = (flowerId: string, quantity: number) => {
-    if (quantity === 0) {
-      setCartItems(prev => prev.filter(item => item.flowerId !== flowerId));
-    } else {
-      setCartItems(prev => 
-        prev.map(item => 
-          item.flowerId === flowerId 
-            ? { ...item, quantity }
-            : item
-        )
-      );
-    }
-  };
-
   if (categoriesLoading || flowersLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -147,8 +106,7 @@ export default function HomePage() {
         <div className="mb-4 flex gap-2 p-4 bg-yellow-100 rounded">
           <button
             onClick={() => {
-              console.log('Current cart items:', cartItems);
-              console.log('Cart count:', cartCount);
+              alert(`Cart items: ${JSON.stringify(cartItems, null, 2)}\nCart count: ${cartCount}`);
             }}
             className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
           >

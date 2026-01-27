@@ -42,7 +42,28 @@ export default function BottomNav() {
 
   const handleNavigation = (href: string, e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(href);
+    
+    console.log('Navigating to:', href);
+    
+    // Add haptic feedback if in Telegram WebApp
+    if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp?.Haptic?.impactOccurred) {
+      try {
+        (window as any).Telegram.WebApp.Haptic.impactOccurred('light');
+        console.log('Haptic feedback triggered');
+      } catch (error) {
+        console.log('Haptic feedback failed:', error);
+      }
+    }
+
+    // Use direct window.location for more reliable navigation in Telegram WebApp
+    try {
+      window.location.href = href;
+      console.log('Navigation using window.location to:', href);
+    } catch (error) {
+      console.error('Window.location navigation failed:', error);
+      // Fallback to Next.js router
+      navigate(href);
+    }
   };
 
   return (
