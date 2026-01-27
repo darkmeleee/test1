@@ -13,11 +13,7 @@ export default function Header({ user }: HeaderProps) {
           {/* Logo and Location */}
           <div className="flex items-center space-x-4">
             <div className="text-xl font-bold text-green-600 dark:text-green-400">
-              🌸 BUNCsdadsH
-            </div>
-            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-              <MapPin className="mr-1 h-4 w-4" />
-              <span>Москва</span>
+              🌸 Расцвет
             </div>
           </div>
 
@@ -34,7 +30,7 @@ export default function Header({ user }: HeaderProps) {
                 )}
                 <div className="text-sm">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    {user.firstName} {user.lastName}
+                    {user.firstName}
                   </div>
                   {user.username && (
                     <div className="text-gray-500 dark:text-gray-400">

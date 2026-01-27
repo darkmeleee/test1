@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOrder } from "~/contexts/OrderContext";
+import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import type { Order } from "~/types";
 
 import Header from "~/components/Header";
@@ -10,60 +11,9 @@ import BottomNav from "~/components/BottomNav";
 
 export default function OrderConfirmationPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user } = useTelegramAuth();
   const { getOrder, isLoading } = useOrder();
   const order = getOrder(params.id);
-
-  // Initialize user with Telegram WebApp data
-  useEffect(() => {
-    const telegramData = window.Telegram?.WebApp?.initData;
-    if (telegramData) {
-      const params = new URLSearchParams(telegramData);
-      const userParam = params.get('user');
-      
-      if (userParam) {
-        try {
-          const user = JSON.parse(decodeURIComponent(userParam));
-          setUser({
-            id: user.id.toString(),
-            telegramId: user.id.toString(),
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            photoUrl: user.photo_url,
-          });
-        } catch (error) {
-          console.error('Error parsing Telegram user data:', error);
-          setUser({
-            id: "1",
-            telegramId: "12345",
-            firstName: "Test",
-            lastName: "User",
-            username: "testuser",
-            photoUrl: "https://via.placeholder.com/100",
-          });
-        }
-      } else {
-        setUser({
-          id: "1",
-          telegramId: "12345",
-          firstName: "Test",
-          lastName: "User",
-          username: "testuser",
-          photoUrl: "https://via.placeholder.com/100",
-        });
-      }
-    } else {
-      setUser({
-        id: "1",
-        telegramId: "12345",
-        firstName: "Test",
-        lastName: "User",
-        username: "testuser",
-        photoUrl: "https://via.placeholder.com/100",
-      });
-    }
-  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {

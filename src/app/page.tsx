@@ -3,22 +3,21 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { initTelegram } from "~/utils/telegram";
-import { authenticateWithTelegram } from "~/utils/auth";
 import Header from "~/components/Header";
 import CategoryFilter from "~/components/CategoryFilter";
 import FlowerGrid from "~/components/FlowerGrid";
 import CartButton from "~/components/CartButton";
 import { hapticImpact } from "~/utils/telegram";
 import { useCart } from "~/contexts/CartContext";
-import type { Flower, Category, User, FilterState } from "~/types";
+import { useTelegramAuth } from "~/hooks/useTelegramAuth";
+import type { Flower, Category, FilterState } from "~/types";
 
 // Components will be created separately
 import BottomNav from "~/components/BottomNav.tsx";
 
 export default function HomePage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user } = useTelegramAuth();
   const [filter, setFilter] = useState<FilterState>({
     selectedCategory: "all", // Will be updated to actual "Все" category ID when categories load
     selectedAttributes: [],
@@ -26,40 +25,6 @@ export default function HomePage() {
 
   // Use CartContext for cart functionality
   const { addToCart, items: cartItems, totalItems: cartCount, totalPrice: cartTotal } = useCart();
-
-  // Initialize Telegram and authenticate
-  useEffect(() => {
-    initTelegram();
-    
-    // Use separate authentication function
-    authenticateWithTelegram()
-      .then((userData) => {
-        if (userData?.success && userData?.user) {
-          setUser(userData.user);
-        } else {
-          console.log('Authentication failed, using mock user'); // Debug log
-          setUser({
-            id: "1",
-            telegramId: "12345",
-            firstName: "Test",
-            lastName: "User",
-            username: "testuser",
-            photoUrl: "https://via.placeholder.com/100",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Authentication error:', error); // Debug log
-        setUser({
-          id: "1",
-          telegramId: "12345",
-          firstName: "Test",
-          lastName: "User",
-          username: "testuser",
-          photoUrl: "https://via.placeholder.com/100",
-        });
-      });
-  }, []);
 
   // Get categories and flowers data
   const { data: categories, isLoading: categoriesLoading } = api.flowers.getCategories.useQuery();
@@ -102,28 +67,6 @@ export default function HomePage() {
       <Header user={user} />
       
       <main className="container mx-auto px-4 py-6 pb-20">
-        {/* Debug buttons */}
-        <div className="mb-4 flex gap-2 p-4 bg-yellow-100 rounded">
-          <button
-            onClick={() => {
-              alert(`Cart items: ${JSON.stringify(cartItems, null, 2)}\nCart count: ${cartCount}`);
-            }}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-          >
-            Log Cart
-          </button>
-          <button
-            onClick={() => {
-              console.log('Refetching cart...');
-              // Trigger cart refetch
-              window.location.reload();
-            }}
-            className="px-3 py-1 bg-green-500 text-white rounded text-sm"
-          >
-            Reload Page
-          </button>
-        </div>
-        
         <CategoryFilter
           categories={(categories || []) as Category[]}
           filter={filter}

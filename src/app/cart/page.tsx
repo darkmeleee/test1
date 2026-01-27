@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hapticImpact } from "~/utils/telegram";
 import { useCart } from "~/contexts/CartContext";
+import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import type { CartItem } from "~/types";
 
 import Header from "~/components/Header";
@@ -12,59 +13,8 @@ import BottomNav from "~/components/BottomNav";
 
 export default function CartPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user } = useTelegramAuth();
   const { items, removeFromCart, updateQuantity, isLoading } = useCart();
-
-  // Initialize user with Telegram WebApp data
-  useEffect(() => {
-    const telegramData = window.Telegram?.WebApp?.initData;
-    if (telegramData) {
-      const params = new URLSearchParams(telegramData);
-      const userParam = params.get('user');
-      
-      if (userParam) {
-        try {
-          const user = JSON.parse(decodeURIComponent(userParam));
-          setUser({
-            id: user.id.toString(),
-            telegramId: user.id.toString(),
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            photoUrl: user.photo_url,
-          });
-        } catch (error) {
-          console.error('Error parsing Telegram user data:', error);
-          setUser({
-            id: "1",
-            telegramId: "12345",
-            firstName: "Test",
-            lastName: "User",
-            username: "testuser",
-            photoUrl: "https://via.placeholder.com/100",
-          });
-        }
-      } else {
-        setUser({
-          id: "1",
-          telegramId: "12345",
-          firstName: "Test",
-          lastName: "User",
-          username: "testuser",
-          photoUrl: "https://via.placeholder.com/100",
-        });
-      }
-    } else {
-      setUser({
-        id: "1",
-        telegramId: "12345",
-        firstName: "Test",
-        lastName: "User",
-        username: "testuser",
-        photoUrl: "https://via.placeholder.com/100",
-      });
-    }
-  }, []);
 
   // Calculate totals
   const cartTotal = items.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
