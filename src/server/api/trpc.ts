@@ -9,9 +9,34 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import crypto from "crypto";
 
 import { db } from "~/server/db";
 import type { User } from "~/types";
+
+function verifyTelegramInitData(initData: string, botToken: string): boolean {
+  const params = new URLSearchParams(initData);
+  const hash = params.get("hash");
+  if (!hash) return false;
+
+  params.delete("hash");
+  const dataCheckString = Array.from(params.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n");
+
+  const secretKey = crypto
+    .createHmac("sha256", "WebAppData")
+    .update(botToken)
+    .digest();
+
+  const computedHash = crypto
+    .createHmac("sha256", secretKey)
+    .update(dataCheckString)
+    .digest("hex");
+
+  return computedHash === hash;
+}
 
 // Create context type
 interface CreateContextOptions {
@@ -44,37 +69,66 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   // 4. Return the user in the context
 
   // For Telegram WebApp, try to get user from initData
-  let user = null;
+  let user: User | null = null;
 
   try {
     // Try to get user from Telegram WebApp initData
-    const authHeader = opts.headers.get("authorization");
     const telegramData = opts.headers.get("x-telegram-data");
 
-    console.log("TRPC Context - Telegram data header:", telegramData);
-
     if (telegramData) {
-      const params = new URLSearchParams(telegramData);
-      const userParam = params.get("user");
-      console.log("TRPC Context - User param:", userParam);
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      if (!botToken) {
+        user = null;
+      } else if (!verifyTelegramInitData(telegramData, botToken)) {
+        user = null;
+      } else {
+        const params = new URLSearchParams(telegramData);
+        const userParam = params.get("user");
 
-      if (userParam) {
-        const userData = JSON.parse(decodeURIComponent(userParam));
-        console.log("TRPC Context - Parsed user data:", userData);
+        if (userParam) {
+          const userData = JSON.parse(decodeURIComponent(userParam)) as {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            photo_url?: string;
+          };
 
-        user = {
-          id: userData.id.toString(),
-          telegramId: userData.id.toString(),
-          firstName: userData.first_name,
-          lastName: userData.last_name,
-          username: userData.username,
-          photoUrl: userData.photo_url,
-        };
+          const telegramId = userData.id.toString();
+          const authDate = parseInt(params.get("auth_date") || "0");
+          const hash = params.get("hash") || "";
 
-        console.log("TRPC Context - Final user object:", user);
+          const dbUser = await db.user.upsert({
+            where: { telegramId },
+            create: {
+              telegramId,
+              username: userData.username,
+              firstName: userData.first_name,
+              lastName: userData.last_name,
+              photoUrl: userData.photo_url,
+              authDate,
+              hash,
+            },
+            update: {
+              username: userData.username,
+              firstName: userData.first_name,
+              lastName: userData.last_name,
+              photoUrl: userData.photo_url,
+              authDate,
+              hash,
+            },
+          });
+
+          user = {
+            id: dbUser.id,
+            telegramId: dbUser.telegramId,
+            firstName: dbUser.firstName,
+            lastName: dbUser.lastName,
+            username: dbUser.username,
+            photoUrl: dbUser.photoUrl,
+          };
+        }
       }
-    } else {
-      console.log("TRPC Context - No telegram data found");
     }
   } catch (error) {
     console.error("Error parsing Telegram user data in context:", error);

@@ -6,6 +6,7 @@ import type { Order, OrderItem } from "~/types";
 import { useCart } from "./CartContext";
 import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import { useToast } from "~/hooks/useToast";
+import { api } from "~/trpc/react";
 
 interface OrderContextType {
   orders: Order[];
@@ -28,6 +29,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const { items: cartItems, clearCart } = useCart();
   const { user } = useTelegramAuth();
   const { showToast } = useToast();
+  const createOrderMutation = api.orders.createOrder.useMutation();
 
   // Load orders from localStorage
   useEffect(() => {
@@ -70,82 +72,28 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     notes?: string;
   }): Promise<Order | null> => {
     try {
+      if (!user || user.id === user.telegramId) {
+        showToast("Авторизация не завершена. Подождите...", "error");
+        return null;
+      }
+
       if (cartItems.length === 0) {
         showToast("Корзина пуста", "error");
         return null;
       }
 
-      // Generate order ID
-      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Calculate total amount
-      const totalAmount = cartItems.reduce(
-        (sum, item) => sum + (item.flower?.price || 0) * item.quantity,
-        0
-      );
-
-      // Create order items
-      const orderItems: OrderItem[] = cartItems.map((item) => ({
-        id: `order_item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        orderId,
-        flowerId: item.flowerId,
-        quantity: item.quantity,
-        price: item.flower?.price || 0,
-        flower: item.flower,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-
-      // Create order object
-      const newOrder: Order = {
-        id: orderId,
-        userId: user?.id || 'unknown',
-        totalAmount,
-        status: "PENDING",
+      const createdOrder = await createOrderMutation.mutateAsync({
         deliveryAddress: orderData.deliveryAddress,
         phoneNumber: orderData.phoneNumber,
         notes: orderData.notes,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        items: orderItems,
-      };
+      });
 
-      // Try to save to database via API first
-      let databaseSaveSuccess = false;
-      try {
-        // Get Telegram data from window if available
-        const telegramData = typeof window !== "undefined" ? window.Telegram?.WebApp?.initData : null;
-        
-        const response = await fetch('/api/trpc/orders.createOrder', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(telegramData && { 'x-telegram-data': telegramData }),
-          },
-          body: JSON.stringify({
-            json: {
-              deliveryAddress: orderData.deliveryAddress,
-              phoneNumber: orderData.phoneNumber,
-              notes: orderData.notes,
-            }
-          }),
-        });
-
-        if (response.ok) {
-          databaseSaveSuccess = true;
-        }
-      } catch (error) {
-        databaseSaveSuccess = false;
-      }
-
-      // If database save failed, show error and don't save locally or clear cart
-      if (!databaseSaveSuccess) {
+      if (!createdOrder) {
         showToast("Ошибка при сохранении заказа. Попробуйте еще раз.", "error");
         return null;
       }
 
-      // Only save to localStorage and clear cart if database save was successful
-      const updatedOrders = [...orders, newOrder];
+      const updatedOrders = [...orders, createdOrder as unknown as Order];
       setOrders(updatedOrders);
       
       // Save to localStorage
@@ -161,7 +109,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       clearCart();
 
       showToast("Заказ успешно создан!", "success");
-      return newOrder;
+      return createdOrder as unknown as Order;
       
     } catch (error) {
       showToast("Ошибка при создании заказа. Попробуйте еще раз.", "error");
