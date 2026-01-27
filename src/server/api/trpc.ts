@@ -43,8 +43,32 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   // 3. Fetch the user from the database
   // 4. Return the user in the context
 
-  // For now, we'll set it to null and handle authentication in the middleware
-  const user = null;
+  // For Telegram WebApp, try to get user from initData
+  let user = null;
+
+  try {
+    // Try to get user from Telegram WebApp initData
+    const authHeader = opts.headers.get("authorization");
+    const telegramData = opts.headers.get("x-telegram-data");
+
+    if (telegramData) {
+      const params = new URLSearchParams(telegramData);
+      const userParam = params.get("user");
+      if (userParam) {
+        const userData = JSON.parse(decodeURIComponent(userParam));
+        user = {
+          id: userData.id.toString(),
+          telegramId: userData.id.toString(),
+          firstName: userData.first_name,
+          lastName: userData.last_name,
+          username: userData.username,
+          photoUrl: userData.photo_url,
+        };
+      }
+    }
+  } catch (error) {
+    console.error("Error parsing Telegram user data in context:", error);
+  }
 
   return {
     db,

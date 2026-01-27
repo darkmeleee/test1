@@ -143,6 +143,29 @@ export default function HomePage() {
       <Header user={user} />
       
       <main className="container mx-auto px-4 py-6 pb-20">
+        {/* Debug buttons */}
+        <div className="mb-4 flex gap-2 p-4 bg-yellow-100 rounded">
+          <button
+            onClick={() => {
+              console.log('Current cart items:', cartItems);
+              console.log('Cart count:', cartCount);
+            }}
+            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+          >
+            Log Cart
+          </button>
+          <button
+            onClick={() => {
+              console.log('Refetching cart...');
+              // Trigger cart refetch
+              window.location.reload();
+            }}
+            className="px-3 py-1 bg-green-500 text-white rounded text-sm"
+          >
+            Reload Page
+          </button>
+        </div>
+        
         <CategoryFilter
           categories={(categories || []) as Category[]}
           filter={filter}

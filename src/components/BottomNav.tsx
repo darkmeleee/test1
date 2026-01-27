@@ -3,6 +3,7 @@
 import { Home, ShoppingBag, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTelegramNavigation } from "~/utils/navigation";
 
 type NavItem = {
   name: string;
@@ -12,6 +13,7 @@ type NavItem = {
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { navigate } = useTelegramNavigation();
 
   const navItems: NavItem[] = [
     {
@@ -38,6 +40,11 @@ export default function BottomNav() {
     return pathname.startsWith(href);
   };
 
+  const handleNavigation = (href: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(href);
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 z-50">
       <div className="container mx-auto px-4">
@@ -48,6 +55,7 @@ export default function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={(e) => handleNavigation(item.href, e)}
                 className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
                   active
                     ? 'text-green-600 dark:text-green-400'

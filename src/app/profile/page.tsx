@@ -240,6 +240,28 @@ export default function ProfilePage() {
             Текущая корзина
           </h2>
           
+          {/* Test navigation buttons */}
+          <div className="mb-4 flex gap-2">
+            <button
+              onClick={() => {
+                console.log('Test navigation to home');
+                router.push('/');
+              }}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              На главную
+            </button>
+            <button
+              onClick={() => {
+                console.log('Test navigation to cart');
+                router.push('/cart');
+              }}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              В корзину
+            </button>
+          </div>
+          
           {cartItems.length === 0 ? (
             <p className="text-gray-600 dark:text-gray-400">
               Ваша корзина пуста
