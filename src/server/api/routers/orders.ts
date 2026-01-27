@@ -10,28 +10,49 @@ export const ordersRouter = createTRPCRouter({
         deliveryAddress: z.string().optional(),
         phoneNumber: z.string().optional(),
         notes: z.string().optional(),
+        items: z
+          .array(
+            z.object({
+              flowerId: z.string(),
+              quantity: z.number().int().positive(),
+            }),
+          )
+          .default([]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // Get user's cart items
-        const cartItems = await ctx.db.cartItem.findMany({
-          where: { userId: ctx.user.id },
-          include: { flower: true },
-        });
-
-        if (cartItems.length === 0) {
+        if (input.items.length === 0) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Cart is empty",
           });
         }
 
-        // Calculate total amount
-        const totalAmount = cartItems.reduce(
-          (sum, item) => sum + item.flower.price * item.quantity,
-          0,
+        const flowerIds = Array.from(
+          new Set(input.items.map((i) => i.flowerId)),
         );
+        const flowers = await ctx.db.flower.findMany({
+          where: { id: { in: flowerIds } },
+        });
+
+        if (flowers.length !== flowerIds.length) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid cart items",
+          });
+        }
+
+        const flowersById = new Map(flowers.map((f) => [f.id, f] as const));
+
+        // Calculate total amount
+        const totalAmount = input.items.reduce((sum, item) => {
+          const flower = flowersById.get(item.flowerId);
+          if (!flower) {
+            return sum;
+          }
+          return sum + flower.price * item.quantity;
+        }, 0);
 
         // Create order
         const order = await ctx.db.order.create({
@@ -47,17 +68,12 @@ export const ordersRouter = createTRPCRouter({
 
         // Create order items
         await ctx.db.orderItem.createMany({
-          data: cartItems.map((item) => ({
+          data: input.items.map((item) => ({
             orderId: order.id,
             flowerId: item.flowerId,
             quantity: item.quantity,
-            price: item.flower.price,
+            price: flowersById.get(item.flowerId)!.price,
           })),
-        });
-
-        // Clear cart
-        await ctx.db.cartItem.deleteMany({
-          where: { userId: ctx.user.id },
         });
 
         // Return order with items
@@ -96,6 +112,9 @@ export const ordersRouter = createTRPCRouter({
         return orderWithItems;
       } catch (error) {
         console.error("Error creating order:", error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create order",

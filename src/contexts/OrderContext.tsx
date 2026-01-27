@@ -102,6 +102,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         deliveryAddress: orderData.deliveryAddress,
         phoneNumber: orderData.phoneNumber,
         notes: orderData.notes,
+        items: itemsForOrder.map((item) => ({
+          flowerId: item.flowerId,
+          quantity: item.quantity,
+        })),
       });
 
       if (!createdOrder) {
