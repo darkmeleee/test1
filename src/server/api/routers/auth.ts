@@ -119,6 +119,7 @@ export const authRouter = createTRPCRouter({
           firstName: user.firstName,
           lastName: user.lastName,
           photoUrl: user.photoUrl,
+          isAdmin: ((user as any).isAdmin as boolean | undefined) ?? false,
         },
       };
     }),
@@ -152,6 +153,7 @@ export const authRouter = createTRPCRouter({
         firstName: user.firstName,
         lastName: user.lastName,
         photoUrl: user.photoUrl,
+        isAdmin: ((user as any).isAdmin as boolean | undefined) ?? false,
         cartItems: user.cartItems,
       };
     }),

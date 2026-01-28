@@ -1441,6 +1441,7 @@ export namespace Prisma {
     firstName: string | null
     lastName: string | null
     photoUrl: string | null
+    isAdmin: boolean | null
     authDate: number | null
     hash: string | null
     createdAt: Date | null
@@ -1454,6 +1455,7 @@ export namespace Prisma {
     firstName: string | null
     lastName: string | null
     photoUrl: string | null
+    isAdmin: boolean | null
     authDate: number | null
     hash: string | null
     createdAt: Date | null
@@ -1467,6 +1469,7 @@ export namespace Prisma {
     firstName: number
     lastName: number
     photoUrl: number
+    isAdmin: number
     authDate: number
     hash: number
     createdAt: number
@@ -1490,6 +1493,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     photoUrl?: true
+    isAdmin?: true
     authDate?: true
     hash?: true
     createdAt?: true
@@ -1503,6 +1507,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     photoUrl?: true
+    isAdmin?: true
     authDate?: true
     hash?: true
     createdAt?: true
@@ -1516,6 +1521,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     photoUrl?: true
+    isAdmin?: true
     authDate?: true
     hash?: true
     createdAt?: true
@@ -1616,6 +1622,7 @@ export namespace Prisma {
     firstName: string
     lastName: string | null
     photoUrl: string | null
+    isAdmin: boolean
     authDate: number
     hash: string
     createdAt: Date
@@ -1648,6 +1655,7 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     photoUrl?: boolean
+    isAdmin?: boolean
     authDate?: boolean
     hash?: boolean
     createdAt?: boolean
@@ -1664,6 +1672,7 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     photoUrl?: boolean
+    isAdmin?: boolean
     authDate?: boolean
     hash?: boolean
     createdAt?: boolean
@@ -1677,6 +1686,7 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     photoUrl?: boolean
+    isAdmin?: boolean
     authDate?: boolean
     hash?: boolean
     createdAt?: boolean
@@ -1703,6 +1713,7 @@ export namespace Prisma {
       firstName: string
       lastName: string | null
       photoUrl: string | null
+      isAdmin: boolean
       authDate: number
       hash: string
       createdAt: Date
@@ -2108,6 +2119,7 @@ export namespace Prisma {
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
     readonly photoUrl: FieldRef<"User", 'String'>
+    readonly isAdmin: FieldRef<"User", 'Boolean'>
     readonly authDate: FieldRef<"User", 'Int'>
     readonly hash: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -7541,6 +7553,7 @@ export namespace Prisma {
     firstName: 'firstName',
     lastName: 'lastName',
     photoUrl: 'photoUrl',
+    isAdmin: 'isAdmin',
     authDate: 'authDate',
     hash: 'hash',
     createdAt: 'createdAt',
@@ -7660,6 +7673,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -7699,13 +7719,6 @@ export namespace Prisma {
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
   /**
    * Deep Input Types
    */
@@ -7721,6 +7734,7 @@ export namespace Prisma {
     firstName?: StringFilter<"User"> | string
     lastName?: StringNullableFilter<"User"> | string | null
     photoUrl?: StringNullableFilter<"User"> | string | null
+    isAdmin?: BoolFilter<"User"> | boolean
     authDate?: IntFilter<"User"> | number
     hash?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -7736,6 +7750,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrderInput | SortOrder
     photoUrl?: SortOrderInput | SortOrder
+    isAdmin?: SortOrder
     authDate?: SortOrder
     hash?: SortOrder
     createdAt?: SortOrder
@@ -7754,6 +7769,7 @@ export namespace Prisma {
     firstName?: StringFilter<"User"> | string
     lastName?: StringNullableFilter<"User"> | string | null
     photoUrl?: StringNullableFilter<"User"> | string | null
+    isAdmin?: BoolFilter<"User"> | boolean
     authDate?: IntFilter<"User"> | number
     hash?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -7769,6 +7785,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrderInput | SortOrder
     photoUrl?: SortOrderInput | SortOrder
+    isAdmin?: SortOrder
     authDate?: SortOrder
     hash?: SortOrder
     createdAt?: SortOrder
@@ -7790,6 +7807,7 @@ export namespace Prisma {
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
     photoUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isAdmin?: BoolWithAggregatesFilter<"User"> | boolean
     authDate?: IntWithAggregatesFilter<"User"> | number
     hash?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -8157,6 +8175,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -8172,6 +8191,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -8187,6 +8207,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8202,6 +8223,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8217,6 +8239,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -8230,6 +8253,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8243,6 +8267,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8646,6 +8671,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -8700,6 +8730,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     photoUrl?: SortOrder
+    isAdmin?: SortOrder
     authDate?: SortOrder
     hash?: SortOrder
     createdAt?: SortOrder
@@ -8717,6 +8748,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     photoUrl?: SortOrder
+    isAdmin?: SortOrder
     authDate?: SortOrder
     hash?: SortOrder
     createdAt?: SortOrder
@@ -8730,6 +8762,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     photoUrl?: SortOrder
+    isAdmin?: SortOrder
     authDate?: SortOrder
     hash?: SortOrder
     createdAt?: SortOrder
@@ -8774,6 +8807,14 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -8849,11 +8890,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type CategoryRelationFilter = {
@@ -8932,14 +8968,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type UserRelationFilter = {
@@ -9114,6 +9142,10 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -9264,10 +9296,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type CategoryUpdateOneRequiredWithoutFlowersNestedInput = {
@@ -9474,6 +9502,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -9541,6 +9574,14 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -9582,11 +9623,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -9601,14 +9637,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type CartItemCreateWithoutUserInput = {
@@ -9951,6 +9979,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -9965,6 +9994,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -10028,6 +10058,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10042,6 +10073,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10095,6 +10127,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -10109,6 +10142,7 @@ export namespace Prisma {
     firstName: string
     lastName?: string | null
     photoUrl?: string | null
+    isAdmin?: boolean
     authDate: number
     hash: string
     createdAt?: Date | string
@@ -10165,6 +10199,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10179,6 +10214,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     authDate?: IntFieldUpdateOperationsInput | number
     hash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

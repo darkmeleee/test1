@@ -25,6 +25,7 @@ export default function ProfilePage() {
         firstName: profileQuery.data.firstName,
         lastName: profileQuery.data.lastName,
         photoUrl: profileQuery.data.photoUrl,
+        isAdmin: profileQuery.data.isAdmin,
       }
     : null;
 
@@ -132,6 +133,17 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+
+          {profileUser.isAdmin && (
+            <div className="mt-4">
+              <button
+                onClick={() => router.push("/admin")}
+                className="w-full rounded bg-brand-600 py-3 text-white font-medium hover:bg-brand-700 transition-colors"
+              >
+                Админ панель
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Active Orders */}

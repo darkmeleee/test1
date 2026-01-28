@@ -17,6 +17,7 @@ export default function CheckoutPage() {
   const { createOrder } = useOrder();
   
   // Form state
+  const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [street, setStreet] = useState("");
@@ -30,6 +31,7 @@ export default function CheckoutPage() {
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
 
+  const [customerNameError, setCustomerNameError] = useState<string | null>(null);
   const [customerPhoneError, setCustomerPhoneError] = useState<string | null>(null);
   const [customerEmailError, setCustomerEmailError] = useState<string | null>(null);
   const [streetError, setStreetError] = useState<string | null>(null);
@@ -73,6 +75,7 @@ export default function CheckoutPage() {
   };
 
   const validateForm = () => {
+    const nextCustomerNameError = validateRequired(customerName, "Укажите имя заказчика");
     const nextCustomerPhoneError = validatePhoneNumber(customerPhone);
     const nextCustomerEmailError = validateEmail(customerEmail);
     const nextStreetError = validateRequired(street, "Укажите улицу");
@@ -87,6 +90,7 @@ export default function CheckoutPage() {
       ? null
       : validatePhoneNumber(recipientPhone);
 
+    setCustomerNameError(nextCustomerNameError);
     setCustomerPhoneError(nextCustomerPhoneError);
     setCustomerEmailError(nextCustomerEmailError);
     setStreetError(nextStreetError);
@@ -97,6 +101,7 @@ export default function CheckoutPage() {
     setRecipientPhoneError(nextRecipientPhoneError);
 
     return !(
+      nextCustomerNameError ||
       nextCustomerPhoneError ||
       nextCustomerEmailError ||
       nextStreetError ||
@@ -124,6 +129,7 @@ export default function CheckoutPage() {
     }`;
 
     const composedNotes = [
+      `Заказчик: ${customerName.trim()}`,
       `Дата доставки: ${deliveryDate}`,
       `Время доставки: ${deliveryTime}`,
       customerEmail.trim() ? `Email заказчика: ${customerEmail.trim()}` : null,
@@ -228,15 +234,34 @@ export default function CheckoutPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
+                <label htmlFor="customerName" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
                   Имя
                 </label>
                 <input
                   type="text"
-                  value={user.firstName}
-                  readOnly
-                  className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-700 bg-brand-50 dark:border-ink-700 dark:bg-ink-700 dark:text-ink-200"
+                  id="customerName"
+                  value={customerName}
+                  onChange={(e) => {
+                    setCustomerName(e.target.value);
+                    if (customerNameError) setCustomerNameError(null);
+                  }}
+                  onBlur={() =>
+                    setCustomerNameError(
+                      validateRequired(customerName, "Укажите имя заказчика"),
+                    )
+                  }
+                  className={`w-full rounded-md border px-3 py-2 text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-1 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400 ${
+                    customerNameError
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600"
+                      : "border-brand-200 focus:border-brand-500 focus:ring-brand-500 dark:border-ink-700"
+                  }`}
+                  placeholder={user.firstName}
                 />
+                {customerNameError && (
+                  <div className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {customerNameError}
+                  </div>
+                )}
               </div>
 
               <div>

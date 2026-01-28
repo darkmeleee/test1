@@ -126,6 +126,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
             lastName: dbUser.lastName,
             username: dbUser.username,
             photoUrl: dbUser.photoUrl,
+            isAdmin: ((dbUser as any).isAdmin as boolean | undefined) ?? false,
           };
         }
       }
@@ -234,5 +235,15 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(
         user: ctx.user as User,
       },
     });
+  }),
+);
+
+export const adminProcedure = protectedProcedure.use(
+  t.middleware(async ({ ctx, next }) => {
+    if (!ctx.user?.isAdmin) {
+      throw new Error("Not authorized");
+    }
+
+    return next({ ctx });
   }),
 );

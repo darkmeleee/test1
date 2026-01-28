@@ -18,6 +18,7 @@ model User {
   firstName  String
   lastName   String?
   photoUrl   String?
+  isAdmin    Boolean    @default(false)
   authDate   Int
   hash       String
   createdAt  DateTime   @default(now())

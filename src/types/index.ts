@@ -54,6 +54,7 @@ export interface User {
   firstName: string;
   lastName?: string | null;
   photoUrl?: string | null;
+  isAdmin?: boolean;
 }
 
 export interface FilterState {
