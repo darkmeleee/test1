@@ -41,7 +41,7 @@ export default function AdminOrdersPage() {
     );
   }
 
-  if (!user.isAdmin) {
+  if (user.isAdmin == false) {
     return (
       <div className="min-h-screen bg-brand-50 dark:bg-ink-900 pb-20">
         <Header user={user} />
