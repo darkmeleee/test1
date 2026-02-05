@@ -78,6 +78,7 @@ model Order {
   id              String      @id @default(cuid())
   userId          String
   totalAmount     Float
+  deliveryFee     Float       @default(0)
   status          String      @default("PENDING") // PENDING, CONFIRMED, DELIVERED, CANCELLED
   deliveryAddress String?
   phoneNumber     String?
@@ -103,4 +104,11 @@ model OrderItem {
 
   @@index([orderId])
   @@index([flowerId])
+}
+
+model AppConfig {
+  id          String   @id
+  deliveryFee Float    @default(500)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

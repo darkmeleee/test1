@@ -6,6 +6,7 @@ import { hapticImpact } from "~/utils/telegram";
 import { useCart } from "~/contexts/CartContext";
 import { useOrder } from "~/contexts/OrderContext";
 import { useTelegramAuth } from "~/hooks/useTelegramAuth";
+import { api } from "~/trpc/react";
 
 import Header from "~/components/Header";
 import BottomNav from "~/components/BottomNav";
@@ -15,6 +16,9 @@ export default function CheckoutPage() {
   const { user } = useTelegramAuth();
   const { items: cartItems, isLoading } = useCart();
   const { createOrder } = useOrder();
+
+  const configQuery = api.config.getConfig.useQuery();
+  const deliveryFee = configQuery.data?.deliveryFee ?? 500;
   
   // Form state
   const [customerName, setCustomerName] = useState("");
@@ -116,6 +120,7 @@ export default function CheckoutPage() {
   // Calculate totals
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalWithDelivery = cartTotal + deliveryFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -570,11 +575,21 @@ export default function CheckoutPage() {
                   </span>
                 </div>
               ))}
+              <div className="border-t border-brand-200 dark:border-ink-700 pt-3 mt-3 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-600 dark:text-ink-300">Товары:</span>
+                  <span className="font-medium text-ink-900 dark:text-white">{cartTotal} ₽</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-600 dark:text-ink-300">Доставка:</span>
+                  <span className="font-medium text-ink-900 dark:text-white">{deliveryFee} ₽</span>
+                </div>
               <div className="border-t border-brand-200 dark:border-ink-700 pt-3 mt-3">
                 <div className="flex justify-between text-lg font-bold">
                   <span className="text-ink-900 dark:text-white">Итого:</span>
-                  <span className="text-brand-700 dark:text-brand-300">{cartTotal} ₽</span>
+                  <span className="text-brand-700 dark:text-brand-300">{totalWithDelivery} ₽</span>
                 </div>
+              </div>
               </div>
             </div>
           </div>

@@ -87,6 +87,16 @@ export default function AdminPage() {
               Список заказов
             </div>
           </Link>
+
+          <Link
+            href="/admin/config"
+            className="block rounded-lg bg-white p-5 shadow-sm transition-colors hover:bg-brand-100 dark:bg-ink-800 dark:hover:bg-ink-700"
+          >
+            <div className="font-semibold text-ink-900 dark:text-white">Настройки</div>
+            <div className="mt-1 text-sm text-ink-600 dark:text-ink-300">
+              Стоимость доставки
+            </div>
+          </Link>
         </div>
       </main>
 

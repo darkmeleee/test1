@@ -6,6 +6,7 @@ import { hapticImpact } from "~/utils/telegram";
 import { useCart } from "~/contexts/CartContext";
 import { useTelegramAuth } from "~/hooks/useTelegramAuth";
 import type { CartItem } from "~/types";
+import { api } from "~/trpc/react";
 
 import Header from "~/components/Header";
 import CartButton from "~/components/CartButton";
@@ -16,9 +17,13 @@ export default function CartPage() {
   const { user } = useTelegramAuth();
   const { items, removeFromCart, updateQuantity, isLoading } = useCart();
 
+  const configQuery = api.config.getConfig.useQuery();
+  const deliveryFee = configQuery.data?.deliveryFee ?? 500;
+
   // Calculate totals
   const cartTotal = items.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalWithDelivery = cartTotal + deliveryFee;
 
   const handleUpdateQuantity = async (flowerId: string, quantity: number) => {
     if (quantity === 0) {
@@ -163,12 +168,22 @@ export default function CartPage() {
             {/* Cart Summary */}
             <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-ink-800">
               <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-600 dark:text-ink-300">Товары:</span>
+                  <span className="font-medium text-ink-900 dark:text-white">{cartTotal} ₽</span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-600 dark:text-ink-300">Доставка:</span>
+                  <span className="font-medium text-ink-900 dark:text-white">{deliveryFee} ₽</span>
+                </div>
+
                 <div className="flex justify-between text-lg">
                   <span className="font-medium text-ink-900 dark:text-white">
                     Итого:
                   </span>
                   <span className="font-bold text-brand-700 dark:text-brand-300">
-                    {cartTotal} ₽
+                    {totalWithDelivery} ₽
                   </span>
                 </div>
                 

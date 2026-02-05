@@ -100,13 +100,30 @@ export default function PaymentPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
+        <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex flex-col items-center">
+            <img
+              src="/кодд.jpg"
+              alt="QR-код для оплаты"
+              className="w-64 max-w-full rounded-lg border border-brand-200 dark:border-ink-700"
+            />
+          </div>
+
+          <div className="mt-4 text-sm text-ink-600 dark:text-ink-300">
+            1) Сумму нужно вставлять вручную: <span className="font-semibold">{order.totalAmount} ₽</span>
+          </div>
+          <div className="mt-2 text-sm text-ink-600 dark:text-ink-300">
+            2) После оплаты с вами свяжется администратор.
+          </div>
+        </div>
+
         <button
           onClick={() => {
             router.push(`/order-confirmation/${order.id}`);
           }}
           className="w-full rounded bg-brand-600 py-3 text-white font-medium hover:bg-brand-700 transition-colors"
         >
-          Оплатить
+          Я оплатил(а)
         </button>
 
         <button

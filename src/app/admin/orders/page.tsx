@@ -108,6 +108,11 @@ export default function AdminOrdersPage() {
                     <div className="text-xl font-bold text-brand-700 dark:text-brand-300">
                       {o.totalAmount} ₽
                     </div>
+                    {typeof (o as any).deliveryFee === "number" && (
+                      <div className="mt-1 text-sm text-ink-600 dark:text-ink-300">
+                        Доставка: {(o as any).deliveryFee} ₽
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -124,6 +129,26 @@ export default function AdminOrdersPage() {
                     </pre>
                   )}
                 </div>
+
+                {(o.items?.length ?? 0) > 0 && (
+                  <div className="mt-4 rounded border border-brand-200 p-4 dark:border-ink-700">
+                    <div className="text-sm font-medium text-ink-900 dark:text-white">
+                      Состав заказа
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {o.items.map((item) => (
+                        <div key={item.id} className="flex justify-between gap-3 text-sm">
+                          <div className="text-ink-600 dark:text-ink-300">
+                            {item.flower?.name ?? item.flowerId} × {item.quantity}
+                          </div>
+                          <div className="font-medium text-ink-900 dark:text-white">
+                            {item.price * item.quantity} ₽
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <div className="text-sm font-medium text-ink-900 dark:text-white">

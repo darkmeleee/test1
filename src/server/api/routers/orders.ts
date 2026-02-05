@@ -58,7 +58,7 @@ export const ordersRouter = createTRPCRouter({
         const flowersById = new Map(flowers.map((f) => [f.id, f] as const));
 
         // Calculate total amount
-        const totalAmount = input.items.reduce((sum, item) => {
+        const itemsAmount = input.items.reduce((sum, item) => {
           const flower = flowersById.get(item.flowerId);
           if (!flower) {
             return sum;
@@ -66,11 +66,21 @@ export const ordersRouter = createTRPCRouter({
           return sum + flower.price * item.quantity;
         }, 0);
 
+        const config = await ctx.db.appConfig.upsert({
+          where: { id: "default" },
+          create: { id: "default" },
+          update: {},
+        });
+
+        const deliveryFee = config.deliveryFee;
+        const totalAmount = itemsAmount + deliveryFee;
+
         // Create order
         const order = await ctx.db.order.create({
           data: {
             userId: ctx.user.id,
             totalAmount,
+            deliveryFee,
             status: "PENDING",
             deliveryAddress: input.deliveryAddress,
             phoneNumber: input.phoneNumber,

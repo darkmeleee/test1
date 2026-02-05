@@ -1,5 +1,6 @@
 import { authRouter } from "~/server/api/routers/auth";
 import { adminRouter } from "~/server/api/routers/admin";
+import { configRouter } from "~/server/api/routers/config";
 import { flowersRouter } from "~/server/api/routers/flowers";
 import { ordersRouter } from "~/server/api/routers/orders";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
@@ -12,6 +13,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   admin: adminRouter,
+  config: configRouter,
   flowers: flowersRouter,
   orders: ordersRouter,
 });

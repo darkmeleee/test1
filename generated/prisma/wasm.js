@@ -170,6 +170,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   totalAmount: 'totalAmount',
+  deliveryFee: 'deliveryFee',
   status: 'status',
   deliveryAddress: 'deliveryAddress',
   phoneNumber: 'phoneNumber',
@@ -185,6 +186,13 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   price: 'price',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.AppConfigScalarFieldEnum = {
+  id: 'id',
+  deliveryFee: 'deliveryFee',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -209,7 +217,8 @@ exports.Prisma.ModelName = {
   Flower: 'Flower',
   CartItem: 'CartItem',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  OrderItem: 'OrderItem',
+  AppConfig: 'AppConfig'
 };
 
 /**
