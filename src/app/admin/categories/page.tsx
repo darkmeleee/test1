@@ -14,7 +14,7 @@ export default function AdminCategoriesPage() {
   const { user } = useTelegramAuth();
 
   const categoriesQuery = api.admin.listCategories.useQuery(undefined, {
-    enabled: !!user?.isAdmin,
+    enabled: user?.isAdmin==true,
   });
 
   const upsertMutation = api.admin.upsertCategory.useMutation({
