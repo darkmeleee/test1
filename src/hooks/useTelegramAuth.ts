@@ -123,20 +123,40 @@ export function useTelegramAuth() {
       try {
         initTelegram();
 
+        const telegramData = window.Telegram?.WebApp?.initData;
+        const webAppUser = getUserFromWebApp();
+
         // First, try to load from localStorage
         const storedUser = loadUserFromStorage();
-        if (storedUser) {
+
+        if (
+          storedUser &&
+          webAppUser?.telegramId &&
+          storedUser.telegramId !== webAppUser.telegramId
+        ) {
+          clearUserFromStorage();
+        } else if (storedUser) {
           setUser(storedUser);
+
+          if (telegramData) {
+            authenticateMutation
+              .mutateAsync({ initData: telegramData })
+              .then((result) => {
+                if (result?.success && result.user) {
+                  setUser(result.user);
+                  saveUserToStorage(result.user);
+                }
+              })
+              .catch(() => {
+                // Keep stored user as a fallback
+              });
+          }
+
           return;
         }
 
-        // Try to get user directly from WebApp first
-        const webAppUser = getUserFromWebApp();
-
         if (webAppUser) {
           setUser(webAppUser);
-
-          const telegramData = window.Telegram?.WebApp?.initData;
           if (!telegramData) {
             return;
           }
@@ -155,8 +175,6 @@ export function useTelegramAuth() {
 
           return;
         }
-
-        const telegramData = window.Telegram?.WebApp?.initData;
         if (!telegramData) {
           clearUserFromStorage();
           setUser(null);
