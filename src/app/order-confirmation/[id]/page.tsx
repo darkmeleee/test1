@@ -169,10 +169,21 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
                 })}
               </span>
             </div>
+
+            {order.deliveryMethod && (
+              <div className="flex justify-between">
+                <span className="text-ink-600 dark:text-ink-300">Способ получения:</span>
+                <span className="text-ink-900 dark:text-white">
+                  {order.deliveryMethod === "PICKUP" ? "Самовывоз" : "Доставка"}
+                </span>
+              </div>
+            )}
             
             {order.deliveryAddress && (
               <div className="flex justify-between">
-                <span className="text-ink-600 dark:text-ink-300">Адрес доставки:</span>
+                <span className="text-ink-600 dark:text-ink-300">
+                  {order.deliveryMethod === "PICKUP" ? "Адрес самовывоза:" : "Адрес доставки:"}
+                </span>
                 <span className="text-ink-900 dark:text-white text-right max-w-xs">
                   {order.deliveryAddress}
                 </span>

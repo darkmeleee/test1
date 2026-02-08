@@ -171,6 +171,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   userId: 'userId',
   totalAmount: 'totalAmount',
   deliveryFee: 'deliveryFee',
+  deliveryMethod: 'deliveryMethod',
   status: 'status',
   deliveryAddress: 'deliveryAddress',
   phoneNumber: 'phoneNumber',

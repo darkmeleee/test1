@@ -19,6 +19,9 @@ export default function CheckoutPage() {
 
   const configQuery = api.config.getConfig.useQuery();
   const deliveryFee = configQuery.data?.deliveryFee ?? 500;
+
+  const PICKUP_ADDRESS = "г, Екатеринбург, улица Машинной 1Б/2";
+  const [deliveryMethod, setDeliveryMethod] = useState<"DELIVERY" | "PICKUP">("DELIVERY");
   
   // Form state
   const [customerName, setCustomerName] = useState("");
@@ -82,8 +85,10 @@ export default function CheckoutPage() {
     const nextCustomerNameError = validateRequired(customerName, "Укажите имя заказчика");
     const nextCustomerPhoneError = validatePhoneNumber(customerPhone);
     const nextCustomerEmailError = validateEmail(customerEmail);
-    const nextStreetError = validateRequired(street, "Укажите улицу");
-    const nextHouseError = validateRequired(house, "Укажите дом");
+    const nextStreetError =
+      deliveryMethod === "PICKUP" ? null : validateRequired(street, "Укажите улицу");
+    const nextHouseError =
+      deliveryMethod === "PICKUP" ? null : validateRequired(house, "Укажите дом");
     const nextDeliveryDateError = validateRequired(deliveryDate, "Укажите дату доставки");
     const nextDeliveryTimeError = validateRequired(deliveryTime, "Укажите время доставки");
 
@@ -120,7 +125,8 @@ export default function CheckoutPage() {
   // Calculate totals
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.flower?.price || 0) * item.quantity, 0);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalWithDelivery = cartTotal + deliveryFee;
+  const effectiveDeliveryFee = deliveryMethod === "PICKUP" ? 0 : deliveryFee;
+  const totalWithDelivery = cartTotal + effectiveDeliveryFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,9 +135,10 @@ export default function CheckoutPage() {
 
     if (!validateForm()) return;
 
-    const composedDeliveryAddress = `${street.trim()}, д. ${house.trim()}${
-      apartment.trim() ? `, кв. ${apartment.trim()}` : ""
-    }`;
+    const composedDeliveryAddress =
+      deliveryMethod === "PICKUP"
+        ? PICKUP_ADDRESS
+        : `${street.trim()}, д. ${house.trim()}${apartment.trim() ? `, кв. ${apartment.trim()}` : ""}`;
 
     const composedNotes = [
       `Заказчик: ${customerName.trim()}`,
@@ -151,6 +158,7 @@ export default function CheckoutPage() {
     
     try {
       const order = await createOrder({
+        deliveryMethod,
         deliveryAddress: composedDeliveryAddress,
         phoneNumber: customerPhone,
         notes: composedNotes,
@@ -231,6 +239,51 @@ export default function CheckoutPage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
+              Способ получения
+            </h2>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setDeliveryMethod("DELIVERY")}
+                className={`rounded border px-4 py-3 text-sm font-medium transition-colors ${
+                  deliveryMethod === "DELIVERY"
+                    ? "bg-brand-600 text-white border-brand-600"
+                    : "bg-brand-100 text-ink-700 border-brand-200 hover:bg-brand-200"
+                }`}
+              >
+                Доставка
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeliveryMethod("PICKUP")}
+                className={`rounded border px-4 py-3 text-sm font-medium transition-colors ${
+                  deliveryMethod === "PICKUP"
+                    ? "bg-brand-600 text-white border-brand-600"
+                    : "bg-brand-100 text-ink-700 border-brand-200 hover:bg-brand-200"
+                }`}
+              >
+                Самовывоз
+              </button>
+            </div>
+
+            {deliveryMethod === "PICKUP" && (
+              <div className="mt-4 rounded border border-brand-200 p-4 text-sm dark:border-ink-700">
+                <div className="font-medium text-ink-900 dark:text-white">Адрес самовывоза</div>
+                <div className="mt-1 text-ink-600 dark:text-ink-300">{PICKUP_ADDRESS}</div>
+                <a
+                  className="mt-3 inline-block rounded bg-brand-600 px-4 py-2 text-white hover:bg-brand-700 transition-colors"
+                  href={`https://yandex.ru/maps/?text=${encodeURIComponent(PICKUP_ADDRESS)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Открыть в Яндекс.Картах
+                </a>
+              </div>
+            )}
+          </div>
           {/* Customer */}
           <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
@@ -325,39 +378,39 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Delivery address */}
-          <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
-              Адрес доставки
-            </h2>
+          {deliveryMethod === "DELIVERY" && (
+            <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold mb-4 text-ink-900 dark:text-white">
+                Адрес доставки
+              </h2>
 
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="street" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
-                  Улица
-                </label>
-                <input
-                  type="text"
-                  id="street"
-                  value={street}
-                  onChange={(e) => {
-                    setStreet(e.target.value);
-                    if (streetError) setStreetError(null);
-                  }}
-                  onBlur={() => setStreetError(validateRequired(street, "Укажите улицу"))}
-                  className={`w-full rounded-md border px-3 py-2 text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-1 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400 ${
-                    streetError
-                      ? "border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600"
-                      : "border-brand-200 focus:border-brand-500 focus:ring-brand-500 dark:border-ink-700"
-                  }`}
-                  placeholder="Например, Ленина"
-                />
-                {streetError && (
-                  <div className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {streetError}
-                  </div>
-                )}
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="street" className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
+                    Улица
+                  </label>
+                  <input
+                    type="text"
+                    id="street"
+                    value={street}
+                    onChange={(e) => {
+                      setStreet(e.target.value);
+                      if (streetError) setStreetError(null);
+                    }}
+                    onBlur={() => setStreetError(validateRequired(street, "Укажите улицу"))}
+                    className={`w-full rounded-md border px-3 py-2 text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-1 dark:bg-ink-700 dark:text-white dark:placeholder-ink-400 ${
+                      streetError
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600"
+                        : "border-brand-200 focus:border-brand-500 focus:ring-brand-500 dark:border-ink-700"
+                    }`}
+                    placeholder="Например, Ленина"
+                  />
+                  {streetError && (
+                    <div className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      {streetError}
+                    </div>
+                  )}
+                </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -471,6 +524,7 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
+          )}
 
           {/* Recipient */}
           <div className="bg-white dark:bg-ink-800 rounded-lg shadow-sm p-6">
@@ -582,14 +636,14 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-ink-600 dark:text-ink-300">Доставка:</span>
-                  <span className="font-medium text-ink-900 dark:text-white">{deliveryFee} ₽</span>
+                  <span className="font-medium text-ink-900 dark:text-white">{effectiveDeliveryFee} ₽</span>
                 </div>
-              <div className="border-t border-brand-200 dark:border-ink-700 pt-3 mt-3">
-                <div className="flex justify-between text-lg font-bold">
-                  <span className="text-ink-900 dark:text-white">Итого:</span>
-                  <span className="text-brand-700 dark:text-brand-300">{totalWithDelivery} ₽</span>
+                <div className="border-t border-brand-200 dark:border-ink-700 pt-3 mt-3">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span className="text-ink-900 dark:text-white">Итого:</span>
+                    <span className="text-brand-700 dark:text-brand-300">{totalWithDelivery} ₽</span>
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>

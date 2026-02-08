@@ -7,6 +7,7 @@ export const ordersRouter = createTRPCRouter({
   createOrder: protectedProcedure
     .input(
       z.object({
+        deliveryMethod: z.enum(["DELIVERY", "PICKUP"]).default("DELIVERY"),
         deliveryAddress: z.string().optional(),
         phoneNumber: z
           .string()
@@ -72,7 +73,8 @@ export const ordersRouter = createTRPCRouter({
           update: {},
         });
 
-        const deliveryFee = config.deliveryFee;
+        const deliveryFee =
+          input.deliveryMethod === "PICKUP" ? 0 : config.deliveryFee;
         const totalAmount = itemsAmount + deliveryFee;
 
         // Create order
@@ -81,6 +83,7 @@ export const ordersRouter = createTRPCRouter({
             userId: ctx.user.id,
             totalAmount,
             deliveryFee,
+            deliveryMethod: input.deliveryMethod,
             status: "PENDING",
             deliveryAddress: input.deliveryAddress,
             phoneNumber: input.phoneNumber,
@@ -112,6 +115,9 @@ export const ordersRouter = createTRPCRouter({
         if (orderWithItems) {
           return {
             ...orderWithItems,
+            deliveryMethod: orderWithItems.deliveryMethod as
+              | "DELIVERY"
+              | "PICKUP",
             status: orderWithItems.status as
               | "PENDING"
               | "CONFIRMED"
@@ -160,6 +166,7 @@ export const ordersRouter = createTRPCRouter({
       // Transform the data to match frontend types
       return orders.map((order) => ({
         ...order,
+        deliveryMethod: order.deliveryMethod as "DELIVERY" | "PICKUP",
         status: order.status as
           | "PENDING"
           | "CONFIRMED"
@@ -218,6 +225,7 @@ export const ordersRouter = createTRPCRouter({
         // Transform the data to match frontend types
         return {
           ...order,
+          deliveryMethod: order.deliveryMethod as "DELIVERY" | "PICKUP",
           status: order.status as
             | "PENDING"
             | "CONFIRMED"

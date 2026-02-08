@@ -11,6 +11,7 @@ import { api } from "~/trpc/react";
 interface OrderContextType {
   orders: Order[];
   createOrder: (orderData: {
+    deliveryMethod?: "DELIVERY" | "PICKUP";
     deliveryAddress?: string;
     phoneNumber?: string;
     notes?: string;
@@ -68,6 +69,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   // Create order from cart
   const createOrder = async (orderData: {
+    deliveryMethod?: "DELIVERY" | "PICKUP";
     deliveryAddress?: string;
     phoneNumber?: string;
     notes?: string;
@@ -99,6 +101,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       }
 
       const createdOrder = await createOrderMutation.mutateAsync({
+        deliveryMethod: orderData.deliveryMethod,
         deliveryAddress: orderData.deliveryAddress,
         phoneNumber: orderData.phoneNumber,
         notes: orderData.notes,

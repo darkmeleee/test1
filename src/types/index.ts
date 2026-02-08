@@ -29,6 +29,7 @@ export interface Order {
   userId: string;
   totalAmount: number;
   deliveryFee?: number;
+  deliveryMethod?: "DELIVERY" | "PICKUP";
   status: "PENDING" | "CONFIRMED" | "DELIVERED" | "CANCELLED";
   deliveryAddress?: string;
   phoneNumber?: string;

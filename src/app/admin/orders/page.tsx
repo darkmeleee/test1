@@ -18,7 +18,7 @@ export default function AdminOrdersPage() {
   const { user } = useTelegramAuth();
 
   const ordersQuery = api.admin.listOrders.useQuery(undefined, {
-    enabled: !!user?.isAdmin,
+    enabled: user?.isAdmin==true,
   });
 
   const updateStatusMutation = api.admin.updateOrderStatus.useMutation({
@@ -119,6 +119,9 @@ export default function AdminOrdersPage() {
                 <div className="mt-4 grid gap-2">
                   <div className="text-sm text-ink-600 dark:text-ink-300">
                     Телефон: {o.phoneNumber ?? "-"}
+                  </div>
+                  <div className="text-sm text-ink-600 dark:text-ink-300">
+                    Способ получения: {o.deliveryMethod === "PICKUP" ? "Самовывоз" : "Доставка"}
                   </div>
                   <div className="text-sm text-ink-600 dark:text-ink-300">
                     Адрес: {o.deliveryAddress ?? "-"}

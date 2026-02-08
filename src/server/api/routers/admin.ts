@@ -135,7 +135,12 @@ export const adminRouter = createTRPCRouter({
 
     return orders.map((order) => ({
       ...order,
-      status: order.status as "PENDING" | "CONFIRMED" | "DELIVERED" | "CANCELLED",
+      deliveryMethod: order.deliveryMethod as "DELIVERY" | "PICKUP",
+      status: order.status as
+        | "PENDING"
+        | "CONFIRMED"
+        | "DELIVERED"
+        | "CANCELLED",
       deliveryAddress: order.deliveryAddress || undefined,
       phoneNumber: order.phoneNumber || undefined,
       notes: order.notes || undefined,
@@ -160,9 +165,14 @@ export const adminRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const order = await ctx.db.order.findUnique({ where: { id: input.id } });
+        const order = await ctx.db.order.findUnique({
+          where: { id: input.id },
+        });
         if (!order) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Order not found",
+          });
         }
         return await ctx.db.order.update({
           where: { id: input.id },

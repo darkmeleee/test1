@@ -79,6 +79,7 @@ model Order {
     userId          String
     totalAmount     Float
     deliveryFee     Float       @default(0)
+    deliveryMethod  String      @default("DELIVERY") // DELIVERY or PICKUP
     status          String      @default("PENDING") // PENDING, CONFIRMED, DELIVERED, CANCELLED
     deliveryAddress String?
     phoneNumber     String?

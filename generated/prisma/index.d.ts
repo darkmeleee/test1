@@ -5615,6 +5615,7 @@ export namespace Prisma {
     userId: string | null
     totalAmount: number | null
     deliveryFee: number | null
+    deliveryMethod: string | null
     status: string | null
     deliveryAddress: string | null
     phoneNumber: string | null
@@ -5628,6 +5629,7 @@ export namespace Prisma {
     userId: string | null
     totalAmount: number | null
     deliveryFee: number | null
+    deliveryMethod: string | null
     status: string | null
     deliveryAddress: string | null
     phoneNumber: string | null
@@ -5641,6 +5643,7 @@ export namespace Prisma {
     userId: number
     totalAmount: number
     deliveryFee: number
+    deliveryMethod: number
     status: number
     deliveryAddress: number
     phoneNumber: number
@@ -5666,6 +5669,7 @@ export namespace Prisma {
     userId?: true
     totalAmount?: true
     deliveryFee?: true
+    deliveryMethod?: true
     status?: true
     deliveryAddress?: true
     phoneNumber?: true
@@ -5679,6 +5683,7 @@ export namespace Prisma {
     userId?: true
     totalAmount?: true
     deliveryFee?: true
+    deliveryMethod?: true
     status?: true
     deliveryAddress?: true
     phoneNumber?: true
@@ -5692,6 +5697,7 @@ export namespace Prisma {
     userId?: true
     totalAmount?: true
     deliveryFee?: true
+    deliveryMethod?: true
     status?: true
     deliveryAddress?: true
     phoneNumber?: true
@@ -5792,6 +5798,7 @@ export namespace Prisma {
     userId: string
     totalAmount: number
     deliveryFee: number
+    deliveryMethod: string
     status: string
     deliveryAddress: string | null
     phoneNumber: string | null
@@ -5824,6 +5831,7 @@ export namespace Prisma {
     userId?: boolean
     totalAmount?: boolean
     deliveryFee?: boolean
+    deliveryMethod?: boolean
     status?: boolean
     deliveryAddress?: boolean
     phoneNumber?: boolean
@@ -5840,6 +5848,7 @@ export namespace Prisma {
     userId?: boolean
     totalAmount?: boolean
     deliveryFee?: boolean
+    deliveryMethod?: boolean
     status?: boolean
     deliveryAddress?: boolean
     phoneNumber?: boolean
@@ -5854,6 +5863,7 @@ export namespace Prisma {
     userId?: boolean
     totalAmount?: boolean
     deliveryFee?: boolean
+    deliveryMethod?: boolean
     status?: boolean
     deliveryAddress?: boolean
     phoneNumber?: boolean
@@ -5882,6 +5892,7 @@ export namespace Prisma {
       userId: string
       totalAmount: number
       deliveryFee: number
+      deliveryMethod: string
       status: string
       deliveryAddress: string | null
       phoneNumber: string | null
@@ -6287,6 +6298,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"Order", 'String'>
     readonly totalAmount: FieldRef<"Order", 'Float'>
     readonly deliveryFee: FieldRef<"Order", 'Float'>
+    readonly deliveryMethod: FieldRef<"Order", 'String'>
     readonly status: FieldRef<"Order", 'String'>
     readonly deliveryAddress: FieldRef<"Order", 'String'>
     readonly phoneNumber: FieldRef<"Order", 'String'>
@@ -8609,6 +8621,7 @@ export namespace Prisma {
     userId: 'userId',
     totalAmount: 'totalAmount',
     deliveryFee: 'deliveryFee',
+    deliveryMethod: 'deliveryMethod',
     status: 'status',
     deliveryAddress: 'deliveryAddress',
     phoneNumber: 'phoneNumber',
@@ -9044,6 +9057,7 @@ export namespace Prisma {
     userId?: StringFilter<"Order"> | string
     totalAmount?: FloatFilter<"Order"> | number
     deliveryFee?: FloatFilter<"Order"> | number
+    deliveryMethod?: StringFilter<"Order"> | string
     status?: StringFilter<"Order"> | string
     deliveryAddress?: StringNullableFilter<"Order"> | string | null
     phoneNumber?: StringNullableFilter<"Order"> | string | null
@@ -9059,6 +9073,7 @@ export namespace Prisma {
     userId?: SortOrder
     totalAmount?: SortOrder
     deliveryFee?: SortOrder
+    deliveryMethod?: SortOrder
     status?: SortOrder
     deliveryAddress?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
@@ -9077,6 +9092,7 @@ export namespace Prisma {
     userId?: StringFilter<"Order"> | string
     totalAmount?: FloatFilter<"Order"> | number
     deliveryFee?: FloatFilter<"Order"> | number
+    deliveryMethod?: StringFilter<"Order"> | string
     status?: StringFilter<"Order"> | string
     deliveryAddress?: StringNullableFilter<"Order"> | string | null
     phoneNumber?: StringNullableFilter<"Order"> | string | null
@@ -9092,6 +9108,7 @@ export namespace Prisma {
     userId?: SortOrder
     totalAmount?: SortOrder
     deliveryFee?: SortOrder
+    deliveryMethod?: SortOrder
     status?: SortOrder
     deliveryAddress?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
@@ -9113,6 +9130,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Order"> | string
     totalAmount?: FloatWithAggregatesFilter<"Order"> | number
     deliveryFee?: FloatWithAggregatesFilter<"Order"> | number
+    deliveryMethod?: StringWithAggregatesFilter<"Order"> | string
     status?: StringWithAggregatesFilter<"Order"> | string
     deliveryAddress?: StringNullableWithAggregatesFilter<"Order"> | string | null
     phoneNumber?: StringNullableWithAggregatesFilter<"Order"> | string | null
@@ -9564,6 +9582,7 @@ export namespace Prisma {
     id?: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -9579,6 +9598,7 @@ export namespace Prisma {
     userId: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -9592,6 +9612,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9607,6 +9628,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9621,6 +9643,7 @@ export namespace Prisma {
     userId: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -9633,6 +9656,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9646,6 +9670,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10148,6 +10173,7 @@ export namespace Prisma {
     userId?: SortOrder
     totalAmount?: SortOrder
     deliveryFee?: SortOrder
+    deliveryMethod?: SortOrder
     status?: SortOrder
     deliveryAddress?: SortOrder
     phoneNumber?: SortOrder
@@ -10166,6 +10192,7 @@ export namespace Prisma {
     userId?: SortOrder
     totalAmount?: SortOrder
     deliveryFee?: SortOrder
+    deliveryMethod?: SortOrder
     status?: SortOrder
     deliveryAddress?: SortOrder
     phoneNumber?: SortOrder
@@ -10179,6 +10206,7 @@ export namespace Prisma {
     userId?: SortOrder
     totalAmount?: SortOrder
     deliveryFee?: SortOrder
+    deliveryMethod?: SortOrder
     status?: SortOrder
     deliveryAddress?: SortOrder
     phoneNumber?: SortOrder
@@ -10826,6 +10854,7 @@ export namespace Prisma {
     id?: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -10839,6 +10868,7 @@ export namespace Prisma {
     id?: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -10910,6 +10940,7 @@ export namespace Prisma {
     userId?: StringFilter<"Order"> | string
     totalAmount?: FloatFilter<"Order"> | number
     deliveryFee?: FloatFilter<"Order"> | number
+    deliveryMethod?: StringFilter<"Order"> | string
     status?: StringFilter<"Order"> | string
     deliveryAddress?: StringNullableFilter<"Order"> | string | null
     phoneNumber?: StringNullableFilter<"Order"> | string | null
@@ -11402,6 +11433,7 @@ export namespace Prisma {
     id?: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -11416,6 +11448,7 @@ export namespace Prisma {
     userId: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -11477,6 +11510,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11491,6 +11525,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11550,6 +11585,7 @@ export namespace Prisma {
     id?: string
     totalAmount: number
     deliveryFee?: number
+    deliveryMethod?: string
     status?: string
     deliveryAddress?: string | null
     phoneNumber?: string | null
@@ -11586,6 +11622,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11599,6 +11636,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11612,6 +11650,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     totalAmount?: FloatFieldUpdateOperationsInput | number
     deliveryFee?: FloatFieldUpdateOperationsInput | number
+    deliveryMethod?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     deliveryAddress?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
