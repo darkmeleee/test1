@@ -89,8 +89,10 @@ export default function CheckoutPage() {
       deliveryMethod === "PICKUP" ? null : validateRequired(street, "Укажите улицу");
     const nextHouseError =
       deliveryMethod === "PICKUP" ? null : validateRequired(house, "Укажите дом");
-    const nextDeliveryDateError = validateRequired(deliveryDate, "Укажите дату доставки");
-    const nextDeliveryTimeError = validateRequired(deliveryTime, "Укажите время доставки");
+    const nextDeliveryDateError =
+      deliveryMethod === "PICKUP" ? null : validateRequired(deliveryDate, "Укажите дату доставки");
+    const nextDeliveryTimeError =
+      deliveryMethod === "PICKUP" ? null : validateRequired(deliveryTime, "Укажите время доставки");
 
     const nextRecipientNameError = isRecipientCustomer
       ? null
@@ -142,8 +144,8 @@ export default function CheckoutPage() {
 
     const composedNotes = [
       `Заказчик: ${customerName.trim()}`,
-      `Дата доставки: ${deliveryDate}`,
-      `Время доставки: ${deliveryTime}`,
+      deliveryMethod === "DELIVERY" ? `Дата доставки: ${deliveryDate}` : null,
+      deliveryMethod === "DELIVERY" ? `Время доставки: ${deliveryTime}` : null,
       customerEmail.trim() ? `Email заказчика: ${customerEmail.trim()}` : null,
       orderComment.trim() ? `Комментарий: ${orderComment.trim()}` : null,
       !isRecipientCustomer
@@ -258,7 +260,11 @@ export default function CheckoutPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setDeliveryMethod("PICKUP")}
+                onClick={() => {
+                  setDeliveryMethod("PICKUP");
+                  setDeliveryDateError(null);
+                  setDeliveryTimeError(null);
+                }}
                 className={`rounded border px-4 py-3 text-sm font-medium transition-colors ${
                   deliveryMethod === "PICKUP"
                     ? "bg-brand-600 text-white border-brand-600"
