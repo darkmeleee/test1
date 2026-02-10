@@ -13,6 +13,13 @@ const STATUSES = [
   "CANCELLED",
 ] as const;
 
+const STATUS_LABEL: Record<(typeof STATUSES)[number], string> = {
+  PENDING: "Ожидает",
+  CONFIRMED: "Подтверждён",
+  DELIVERED: "Доставлен",
+  CANCELLED: "Отменён",
+};
+
 export default function AdminOrdersPage() {
   const router = useRouter();
   const { user } = useTelegramAuth();
@@ -169,7 +176,7 @@ export default function AdminOrdersPage() {
                   >
                     {STATUSES.map((s) => (
                       <option key={s} value={s}>
-                        {s}
+                        {STATUS_LABEL[s]}
                       </option>
                     ))}
                   </select>

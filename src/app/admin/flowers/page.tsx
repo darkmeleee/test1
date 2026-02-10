@@ -159,11 +159,32 @@ export default function AdminFlowersPage() {
 
             <div>
               <label className="block text-sm font-medium text-ink-700 dark:text-ink-200 mb-1">
-                Изображение (URL)
+                Изображение
               </label>
+              {image && (
+                <div className="mb-2">
+                  <img
+                    src={image}
+                    alt="preview"
+                    className="h-24 w-24 rounded object-cover border border-brand-200 dark:border-ink-700"
+                  />
+                </div>
+              )}
               <input
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    const result = reader.result;
+                    if (typeof result === "string") {
+                      setImage(result);
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }}
                 className="w-full rounded-md border border-brand-200 px-3 py-2 text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-ink-700 dark:bg-ink-700 dark:text-white"
               />
             </div>
@@ -217,7 +238,7 @@ export default function AdminFlowersPage() {
                   onChange={(e) => setDeliveryNextDay(e.target.checked)}
                   className="h-4 w-4 rounded border-brand-200 text-brand-600 focus:ring-brand-500"
                 />
-                <span className="text-sm">Доставка завтра</span>
+                <span className="text-sm">Сделаем на заказ</span>
               </label>
             </div>
 

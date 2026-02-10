@@ -51,13 +51,20 @@ export default function HomePage() {
       
       if (filter.selectedAttributes.length === 0) return true;
       return filter.selectedAttributes.some(attr => flower.attributes.includes(attr));
-    }) || [];
+    }).filter((flower) => flower.inStock) || [];
   }, [allFlowers, filter.selectedCategory, filter.selectedAttributes, categories]);
 
   if (categoriesLoading || flowersLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Загрузка...</div>
+      <div className="flex min-h-screen items-center justify-center bg-brand-50 dark:bg-ink-900">
+        <div className="flex flex-col items-center gap-4">
+          <img
+            src="/l.svg"
+            alt="Загрузка"
+            className="h-24 w-24 animate-pulse"
+          />
+          <div className="text-lg text-ink-600 dark:text-ink-300">Загрузка...</div>
+        </div>
       </div>
     );
   }

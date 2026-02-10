@@ -56,15 +56,19 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
 
       {/* Attributes */}
       <div>
+        <div className="h-px w-full bg-brand-200 dark:bg-ink-700" />
+        <h3 className="mt-3 mb-2 text-sm font-semibold text-ink-900 dark:text-white">
+          Подкатегории
+        </h3>
         <div className="flex flex-wrap gap-2">
           {attributeCategories.map((category) => (
             <button
               key={category.id}
-              onClick={() => handleAttributeToggle(category.name)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                filter.selectedAttributes.includes(category.name)
-                  ? "bg-blue-600 text-white"
-                  : "bg-brand-100 text-ink-700 hover:bg-brand-200 dark:bg-ink-700 dark:text-ink-200 dark:hover:bg-ink-600"
+              onClick={() => handleAttributeToggle(category.id)}
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors border ${
+                filter.selectedAttributes.includes(category.id)
+                  ? "bg-ink-900 text-white border-ink-900 dark:bg-white dark:text-ink-900 dark:border-white"
+                  : "bg-white text-ink-700 border-brand-200 hover:bg-brand-50 dark:bg-ink-800 dark:text-ink-200 dark:border-ink-700 dark:hover:bg-ink-700"
               }`}
             >
               {category.name}

@@ -34,7 +34,7 @@ export default function FlowerGrid({ flowers, onAddToCart, cartItems }: FlowerGr
               {/* Delivery Badge */}
               {flower.deliveryNextDay && (
                 <div className="absolute left-2 top-2 rounded bg-brand-600 px-2 py-1 text-xs text-white">
-                  Доставка завтра
+                  Сделаем на заказ
                 </div>
               )}
 
