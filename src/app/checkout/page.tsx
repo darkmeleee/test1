@@ -50,6 +50,41 @@ export default function CheckoutPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const hasMadeToOrderItems = cartItems.some((item) => item.flower?.deliveryNextDay);
+  const minLeadHours = hasMadeToOrderItems ? 4 : 1;
+
+  const getNowEkb = () => {
+    const parts = new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Asia/Yekaterinburg",
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+      .formatToParts(new Date())
+      .reduce<Record<string, string>>((acc, p) => {
+        if (p.type !== "literal") acc[p.type] = p.value;
+        return acc;
+      }, {});
+
+    return {
+      year: Number(parts.year),
+      month: Number(parts.month),
+      day: Number(parts.day),
+      hour: Number(parts.hour),
+      minute: Number(parts.minute),
+      second: Number(parts.second),
+    };
+  };
+
+  const ekbToUtcMs = (y: number, m: number, d: number, hh: number, mm: number) => {
+    const ekbOffsetMinutes = 5 * 60;
+    return Date.UTC(y, m - 1, d, hh, mm) - ekbOffsetMinutes * 60 * 1000;
+  };
+
   const validatePhoneNumber = (value: string) => {
     const digits = value.replace(/\D/g, "");
 
@@ -81,6 +116,38 @@ export default function CheckoutPage() {
     return value.trim().length === 0 ? message : null;
   };
 
+  const validateDeliveryDateTime = (dateValue: string, timeValue: string) => {
+    if (deliveryMethod !== "DELIVERY") return null;
+    if (!dateValue || !timeValue) return null;
+
+    const [yStr, mStr, dStr] = dateValue.split("-");
+    const [hhStr, mmStr] = timeValue.split(":");
+    const y = Number(yStr);
+    const m = Number(mStr);
+    const d = Number(dStr);
+    const hh = Number(hhStr);
+    const mm = Number(mmStr);
+
+    if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d) || Number.isNaN(hh) || Number.isNaN(mm)) {
+      return "Введите корректные дату и время";
+    }
+
+    if (hh < 9 || (hh === 21 && mm > 0) || hh > 21) {
+      return "Доставка доступна только с 09:00 до 21:00";
+    }
+
+    const nowEkb = getNowEkb();
+    const nowUtcMs = ekbToUtcMs(nowEkb.year, nowEkb.month, nowEkb.day, nowEkb.hour, nowEkb.minute);
+    const selectedUtcMs = ekbToUtcMs(y, m, d, hh, mm);
+    const minUtcMs = nowUtcMs + minLeadHours * 60 * 60 * 1000;
+
+    if (selectedUtcMs < minUtcMs) {
+      return `Выберите время не ранее чем через ${minLeadHours} ч.`;
+    }
+
+    return null;
+  };
+
   const validateForm = () => {
     const nextCustomerNameError = validateRequired(customerName, "Укажите имя заказчика");
     const nextCustomerPhoneError = validatePhoneNumber(customerPhone);
@@ -91,8 +158,10 @@ export default function CheckoutPage() {
       deliveryMethod === "PICKUP" ? null : validateRequired(house, "Укажите дом");
     const nextDeliveryDateError =
       deliveryMethod === "PICKUP" ? null : validateRequired(deliveryDate, "Укажите дату доставки");
-    const nextDeliveryTimeError =
+    const requiredDeliveryTimeError =
       deliveryMethod === "PICKUP" ? null : validateRequired(deliveryTime, "Укажите время доставки");
+    const leadTimeError = validateDeliveryDateTime(deliveryDate, deliveryTime);
+    const nextDeliveryTimeError = requiredDeliveryTimeError || leadTimeError;
 
     const nextRecipientNameError = isRecipientCustomer
       ? null
@@ -496,17 +565,27 @@ export default function CheckoutPage() {
                     type="time"
                     id="deliveryTime"
                     value={deliveryTime}
+                    min="09:00"
+                    max="21:00"
                     onChange={(e) => {
                       setDeliveryTime(e.target.value);
                       if (deliveryTimeError) setDeliveryTimeError(null);
                     }}
-                    onBlur={() => setDeliveryTimeError(validateRequired(deliveryTime, "Укажите время доставки"))}
+                    onBlur={() =>
+                      setDeliveryTimeError(
+                        validateRequired(deliveryTime, "Укажите время доставки") ||
+                          validateDeliveryDateTime(deliveryDate, deliveryTime),
+                      )
+                    }
                     className={`w-full rounded-md border px-3 py-2 text-ink-900 focus:outline-none focus:ring-1 dark:bg-ink-700 dark:text-white ${
                       deliveryTimeError
                         ? "border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600"
                         : "border-brand-200 focus:border-brand-500 focus:ring-brand-500 dark:border-ink-700"
                     }`}
                   />
+                  <div className="mt-1 text-xs text-ink-600 dark:text-ink-300">
+                    Не ранее чем через {minLeadHours} ч. (Екб)
+                  </div>
                   {deliveryTimeError && (
                     <div className="mt-1 text-sm text-red-600 dark:text-red-400">
                       {deliveryTimeError}

@@ -34,9 +34,6 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
     <div className="space-y-4">
       {/* Main Categories */}
       <div>
-        <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">
-          Категории
-        </h2>
         <div className="flex flex-wrap gap-2">
           {mainCategories.map((category) => (
             <button
@@ -57,10 +54,7 @@ export default function CategoryFilter({ categories, filter, onFilterChange }: C
       {/* Attributes */}
       <div>
         <div className="h-px w-full bg-brand-200 dark:bg-ink-700" />
-        <h3 className="mt-3 mb-2 text-sm font-semibold text-ink-900 dark:text-white">
-          Подкатегории
-        </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {attributeCategories.map((category) => (
             <button
               key={category.id}

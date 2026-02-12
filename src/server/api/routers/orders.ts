@@ -1,6 +1,28 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { env } from "~/env";
+
+const TELEGRAM_ADMIN_CHAT_ID = 8190597967;
+
+async function sendTelegramMessage(text: string) {
+  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_ADMIN_CHAT_ID,
+      text,
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Telegram sendMessage failed: ${res.status} ${body}`);
+  }
+}
 
 export const ordersRouter = createTRPCRouter({
   // Create order from cart
@@ -110,6 +132,42 @@ export const ordersRouter = createTRPCRouter({
             },
           },
         });
+
+        if (orderWithItems) {
+          const itemsText = orderWithItems.items
+            .map((item) => {
+              const name = item.flower?.name ?? item.flowerId;
+              return `- ${name} × ${item.quantity} = ${item.price * item.quantity} ₽`;
+            })
+            .join("\n");
+
+          const deliveryMethodLabel =
+            orderWithItems.deliveryMethod === "PICKUP"
+              ? "Самовывоз"
+              : "Доставка";
+
+          const text = [
+            "<b>Новый заказ</b>",
+            `#${orderWithItems.id.slice(-8)}`,
+            `Сумма: <b>${orderWithItems.totalAmount} ₽</b>`,
+            `Способ получения: <b>${deliveryMethodLabel}</b>`,
+            orderWithItems.deliveryAddress
+              ? `Адрес: ${orderWithItems.deliveryAddress}`
+              : null,
+            orderWithItems.phoneNumber
+              ? `Телефон: ${orderWithItems.phoneNumber}`
+              : null,
+            itemsText ? `\n<b>Состав заказа</b>\n${itemsText}` : null,
+          ]
+            .filter(Boolean)
+            .join("\n");
+
+          try {
+            await sendTelegramMessage(text);
+          } catch (e) {
+            console.error("Failed to send Telegram notification:", e);
+          }
+        }
 
         // Transform the data to match frontend types
         if (orderWithItems) {
